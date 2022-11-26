@@ -20,7 +20,10 @@ void main() {
   initializeDateFormatting();
   Map<String, dynamic>? currentUserData;
   FileManager(fileName: currentUserFile).readData().then((value) {
+    // print(value);
     currentUserData = jsonDecode(value);
+  }, onError: (e) {
+    // print(e);
   });
 
   //  = FileManager(fileName: currentUserFile).readData();
@@ -47,7 +50,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         // fontFamily:
-        inputDecorationTheme: const InputDecorationTheme(
+        inputDecorationTheme: InputDecorationTheme(
           contentPadding: EdgeInsets.all(12),
           enabledBorder: OutlineInputBorder(
             borderSide:
@@ -55,6 +58,13 @@ class MyApp extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(width: 3, color: Colors.blue), //<-- SEE HERE
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(width: 2, color: Colors.red.shade300), //<-- SEE HERE
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(width: 2, color: Colors.red.shade300),
           ),
         ),
         textTheme: GoogleFonts.ibmPlexSansThaiTextTheme(),
@@ -81,8 +91,8 @@ class MyApp extends StatelessWidget {
           : HomePage(currentUserData: right(currentUserData!)),
     );
     return MultiBlocProvider(providers: [
-      BlocProvider<UserBloc>(
-        create: (BuildContext context) => UserBloc(),
+      BlocProvider<UserSessionBloc>(
+        create: (BuildContext context) => UserSessionBloc(),
       ),
     ], child: child);
   }

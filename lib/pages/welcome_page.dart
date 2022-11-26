@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mental_monitor/blocs/user/user_bloc.dart';
@@ -28,12 +29,9 @@ class WelcomePage extends StatelessWidget {
                 Center(
                   child: ElevatedButton(
                       onPressed: () {
-                        print(controller.text);
-                        // context
-                        //     .read<UserBloc>()
-                        //     .add(RegisterUserEvent(controller.text));
-
-                        // Navigator.of(context).push(MaterialPageRoute(builder: (builder) => HomePage()));
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (builder) => HomePage(
+                                currentUserData: left(controller.text))));
                       },
                       child: Text("เริ่มใช้งาน")),
                 ),

@@ -1,3 +1,4 @@
+import 'package:duration/duration.dart';
 import 'package:flutter/material.dart';
 
 class DailyRecord {
@@ -12,14 +13,19 @@ class DailyRecord {
     required this.sleepTime,
   });
 
+  @override
+  String toString() =>
+      'DailyRecord(recordDate: $recordDate, moodLevel: $moodLevel, howWasYourDay: $howWasYourDay, sleepTime: $sleepTime)';
+
+  // factory DailyRecord.fromJson(Map<String, dynamic> json)
   DailyRecord.fromJson(Map<String, dynamic> json)
-      : recordDate = json["record_date"],
+      : recordDate = DateTime.parse(json["record_date"]),
         moodLevel = json["mood_level"],
         howWasYourDay = json["how_was_your_day"],
         sleepTime = json["sleep_time"];
 
   Map<String, dynamic> toJson() => {
-        'record_date': recordDate,
+        'record_date': recordDate.toIso8601String(),
         'mood_level': moodLevel,
         'how_was_your_day': howWasYourDay,
         'sleep_time': sleepTime
