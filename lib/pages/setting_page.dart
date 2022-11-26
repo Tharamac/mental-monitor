@@ -23,27 +23,17 @@ class SettingPage extends StatelessWidget {
               "การแจ้งเตือนการบันทึก",
               style: GoogleFonts.ibmPlexSansThai(fontSize: 16, fontWeight: FontWeight.bold),
             ),
+            SizedBox(
+              height: 12,
+            ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Expanded(
-                  child: TextFormField(
-                    // readOnly: true,
-                    // controller: TextEditingController(text: "30 เมษายน 2564"),
-                    maxLines: 1,
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                      // contentPadding: EdgeInsets.all(8),
-                      label: Text("เวลาแจ้งเตือน"),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(width: 2, color: Colors.blueGrey), //<-- SEE HERE
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(width: 2, color: Colors.blueGrey), //<-- SEE HERE
-                      ),
-                    ),
-                  ),
-                ),
-                Text("ของทุกวัน")
+                Text("แอพจะแจ้งเตือนเวลา 19.00น. ของทุกวัน"),
+                TextButton(
+                  onPressed: () {},
+                  child: Text("เปลี่ยนเวลา"),
+                )
               ],
             ),
             Divider(),
@@ -56,6 +46,9 @@ class SettingPage extends StatelessWidget {
             Text(
               "ส่งข้อมูลไปที่อีเมล์",
               style: GoogleFonts.ibmPlexSansThai(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              height: 12,
             ),
             Row(
               children: [

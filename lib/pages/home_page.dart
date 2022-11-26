@@ -1,18 +1,38 @@
+import 'package:dartz/dartz.dart' hide State;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:math';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:mental_monitor/blocs/user/user_bloc.dart';
 import 'package:mental_monitor/pages/new_entries_page.dart';
 import 'package:mental_monitor/widgets/menu_drawer.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final Either<String, Map<String, dynamic>> currentUserData;
+  const HomePage({
+    Key? key,
+    required this.currentUserData,
+  }) : super(key: key);
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   @override
+  void initState() {
+    widget.currentUserData.fold((newUser) {
+      context.read<UserBloc>().add(RegisterUserEvent(newUser));
+    }, (existingUser) {
+      context.read<UserBloc>().add(ImportExistingUserEvent(existingUser));
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    DateTime today = DateTime(
+        DateTime.now().year + 543, DateTime.now().month, DateTime.now().day);
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -47,13 +67,16 @@ class _HomePageState extends State<HomePage> {
                 child: Card(
                   color: Colors.blueGrey[200],
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(
-                          "วันที่ 30 พฤศจิกายน พ.ศ.2565",
+                          DateFormat.yMMMMd()
+                              .format(today)
+                              .replaceAll('ค.ศ.', 'พ.ศ.'),
                           style: GoogleFonts.ibmPlexSansThai(
                             fontWeight: FontWeight.w600,
                           ),
@@ -63,7 +86,9 @@ class _HomePageState extends State<HomePage> {
                           child: Container(
                             padding: EdgeInsets.all(4),
                             alignment: Alignment.center,
-                            decoration: BoxDecoration(color: Colors.blueGrey[400], borderRadius: BorderRadius.circular(6)),
+                            decoration: BoxDecoration(
+                                color: Colors.blueGrey[400],
+                                borderRadius: BorderRadius.circular(6)),
                             child: Text(
                               "วันนี้ยังไม่ได้บันทึกเรื่องราว กดเพื่อบันทึกเลย",
                               textAlign: TextAlign.center,
@@ -77,14 +102,18 @@ class _HomePageState extends State<HomePage> {
                           height: 8,
                         ),
                         TextButton.icon(
-                          style: ElevatedButton.styleFrom(primary: Colors.blueGrey[200]),
+                          style: ElevatedButton.styleFrom(
+                              primary: Colors.blueGrey[200]),
                           onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (builder) => NewMentalEntryPage()));
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (builder) => NewMentalEntryPage()));
                           },
                           icon: Icon(Icons.add, color: Colors.black),
                           label: Text(
                             "เพิ่มบันทึกของวันนี้",
-                            style: GoogleFonts.ibmPlexSansThai(fontWeight: FontWeight.w600, color: Colors.black),
+                            style: GoogleFonts.ibmPlexSansThai(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black),
                           ),
                         ),
                       ],
@@ -193,11 +222,14 @@ class EntryRecordCard extends StatelessWidget {
             ),
             Container(
                 padding: EdgeInsets.all(4),
-                decoration: BoxDecoration(color: Colors.lightBlue[200], borderRadius: BorderRadius.circular(6)),
+                decoration: BoxDecoration(
+                    color: Colors.lightBlue[200],
+                    borderRadius: BorderRadius.circular(6)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Transform.rotate(angle: pi, child: Icon(Icons.format_quote)),
+                    Transform.rotate(
+                        angle: pi, child: Icon(Icons.format_quote)),
                     Text(
                       "วันนี้ผมได้ดูชาร์แก้งอีกวัน มันสุดจะ amazing ไปเยย วันนี้เจ้่าชายไลฟ์ด้วยก็ดีไปใหญ่เลย",
                     ),
