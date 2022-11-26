@@ -10,23 +10,28 @@ import 'package:intl/intl.dart';
 import 'package:mental_monitor/blocs/app_bloc_observer.dart';
 import 'package:mental_monitor/blocs/user/user_bloc.dart';
 import 'package:mental_monitor/constant/constant.dart';
+import 'package:mental_monitor/data_mock.dart';
 import 'package:mental_monitor/file_manager.dart';
 import 'package:mental_monitor/pages/welcome_page.dart';
 
 import 'pages/home_page.dart';
 
+const useMockData = true;
 void main() {
   Intl.defaultLocale = 'th';
   initializeDateFormatting();
   Map<String, dynamic>? currentUserData;
-  FileManager(fileName: currentUserFile).readData().then((value) {
-    // print(value);
-    currentUserData = jsonDecode(value);
-  }, onError: (e) {
-    // print(e);
-  });
+  if (useMockData)
+    currentUserData = mockUserData.toJson();
+  else {
+    FileManager(fileName: currentUserFile).readData().then((value) {
+      // print(value);
+      currentUserData = jsonDecode(value);
+    }, onError: (e) {
+      // print(e);
+    });
+  }
 
-  //  = FileManager(fileName: currentUserFile).readData();
   Bloc.observer = AppBlocObserver();
   runApp(MyApp(
     currentUserData: currentUserData,
@@ -45,18 +50,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final child = MaterialApp(
-      title: 'MentalMonitor',
+      title: 'MoodMonitor',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         // fontFamily:
         inputDecorationTheme: InputDecorationTheme(
-          contentPadding: EdgeInsets.all(12),
-          enabledBorder: OutlineInputBorder(
+          contentPadding: const EdgeInsets.all(12),
+          enabledBorder: const OutlineInputBorder(
             borderSide:
                 BorderSide(width: 2, color: Colors.blueGrey), //<-- SEE HERE
           ),
-          focusedBorder: OutlineInputBorder(
+          focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(width: 3, color: Colors.blue), //<-- SEE HERE
           ),
           errorBorder: OutlineInputBorder(
@@ -81,8 +86,6 @@ class MyApp extends StatelessWidget {
                 fontWeight: FontWeight.bold),
             iconTheme: IconThemeData(color: Colors.blue[400], size: 35),
             actionsIconTheme: const IconThemeData(color: Colors.black87),
-
-            /// Elevation is easy and works OK too
             elevation: 2,
             shadowColor: Colors.blue[300]),
       ),
