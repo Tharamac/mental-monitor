@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:mental_monitor/constant/constant.dart';
 import 'package:mental_monitor/file_manager.dart';
+import 'package:mental_monitor/model/daily_record.dart';
 import 'package:mental_monitor/model/user.dart';
 import 'package:meta/meta.dart';
 
@@ -16,5 +17,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       newRecordsFile.writedata(newUser.toJson().toString());
       state.copyWith(name: event.newName);
     });
+
   }
 }
