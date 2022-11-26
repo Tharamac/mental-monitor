@@ -18,5 +18,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       state.copyWith(name: event.newName);
     });
 
+    on<ImportExistingUserEvent>((event, emit) {
+      final existingUser = User.fromJson(event.currentUserData);
+
+      print(existingUser.records);
+
+      // state.copyWith(name: existingUser.name, records: );
+    });
   }
 }

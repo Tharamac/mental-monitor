@@ -13,7 +13,7 @@ class RegisterUserEvent extends UserEvent {
 }
 
 class ImportExistingUserEvent extends UserEvent {
-  final Map? currentUserData;
+  final Map<String, dynamic> currentUserData;
   const ImportExistingUserEvent(this.currentUserData);
 }
 // class RegisterUser extends UserEvent {}
