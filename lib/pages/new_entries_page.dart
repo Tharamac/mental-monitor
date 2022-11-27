@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mental_monitor/blocs/user/user_bloc.dart';
 import 'package:mental_monitor/constant/palette.dart';
 import 'dart:math';
 import 'package:intl/intl.dart';
@@ -53,18 +55,18 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                         sleepTime: Duration(
                             hours: int.parse(hourDurationController.text),
                             minutes: int.parse(minuteDurationController.text)));
-                    final mockuser = User(name: "makuji", records: [
-                      todayRecord,
-                      todayRecord,
-                      todayRecord,
-                      todayRecord
-                    ]);
+
                     // pass
                     // print(todayRecord.toJson());
                     // print(DailyRecord.fromJson(todayRecord.toJson()));
                     // pass
-                    print(mockuser.toJson());
-                    print(User.fromJson(mockuser.toJson()));
+                    context
+                        .read<UserSessionBloc>()
+                        .add(UpdateDailyRecord(todayRecord));
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("บันทึกสำเร็จ"),
+                    ));
+                    Navigator.of(context).pop();
                   }
                 },
                 child: Text("บันทึก",
