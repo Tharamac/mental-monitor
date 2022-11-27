@@ -174,7 +174,7 @@ class _HomePageState extends State<HomePage> {
                     Text(
                       'วันที่ ${formatDateInThai(tdRec?.recordDate ?? DateTime.now())}',
                       style: GoogleFonts.ibmPlexSansThai(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontWeight: FontWeight.w600,
                         height: 1.4,
                       ),
@@ -183,7 +183,7 @@ class _HomePageState extends State<HomePage> {
                       Text(
                         'บันทึกเมื่อ ${DateFormat.Hm().format(tdRec.recordDate)}',
                         style: GoogleFonts.ibmPlexSansThai(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.w600,
                           height: 1.4,
                         ),
@@ -194,7 +194,7 @@ class _HomePageState extends State<HomePage> {
                           const Icon(
                             Icons.nights_stay_rounded,
                             size: 16,
-                            color: Colors.white,
+                            color: Colors.black,
                           ),
                           Text(
                             ' ${prettyDuration(tdRec.sleepTime, locale: DurationLocale.fromLanguageCode('th')!)}',
@@ -202,7 +202,7 @@ class _HomePageState extends State<HomePage> {
                                 fontWeight: FontWeight.w600,
                                 // height: 1.2,
                                 // decoration: TextDecoration(),
-                                color: Colors.white),
+                                color: Colors.black),
                           )
                         ],
                       ),
@@ -218,7 +218,7 @@ class _HomePageState extends State<HomePage> {
                         "ระดับอารมณ์",
                         style: GoogleFonts.ibmPlexSansThai(
                           fontSize: 14,
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.w600,
                           height: 1.2,
                         ),
@@ -228,7 +228,7 @@ class _HomePageState extends State<HomePage> {
                         tdRec.moodLevel.toString(),
                         style: GoogleFonts.ibmPlexSansThai(
                           fontSize: 30,
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.w900,
                           height: 1.2,
                         ),
@@ -268,7 +268,7 @@ class _HomePageState extends State<HomePage> {
                             tdRec.howWasYourDay,
                             // textAlign: TextAlign.left,
                             style: GoogleFonts.ibmPlexSansThai(
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                         )),
