@@ -15,22 +15,33 @@ class User {
     // DateTime timeNotified,
   })  : records = records ?? [],
         notificationTime = notificationTime ??
-          DateTime(DateTime.now().year, DateTime.now().month,
-                DateTime.now().day, 19, 0, 0)  ;
+            DateTime(DateTime.now().year, DateTime.now().month,
+                DateTime.now().day, 19, 0, 0);
 
   @override
   String toString() => 'name: $name, records: $records';
 
-  User.fromJson(Map<String, dynamic> json)
-      : name = json["name"],
-        records = json["records"],
-        notificationTime = DateTime.parse(json["notified_time"]);
+  factory User.fromJson(Map<String, dynamic> json) {
+    var records = jsonDecode(json['records']) as List;
+    final dailyRecords = records
+        .map((recordJson) => recordJson as Map<String, dynamic>)
+        .toList()
+        .map((e) => DailyRecord.fromJson(e))
+        .toList();
+    print(dailyRecords);
+
+    return User(
+        name: json["name"],
+        notificationTime: DateTime.parse(json["notified_time"]),
+        records: dailyRecords);
+  }
 
   Map<String, dynamic> toJson() {
     records.sort((a, b) => b.recordDate.compareTo(a.recordDate));
+    print(Duration(minutes: 480));
     return {
       'name': name,
-      'records': records,
+      'records': jsonEncode(records),
       "notified_time": notificationTime.toIso8601String()
     };
   }

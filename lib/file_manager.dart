@@ -21,7 +21,7 @@ class FileManager {
     final file = await localFile;
 
     // Read the file
-    final contents = file.readAsStringSync();
+    final contents = file.readAsString();
 
     return contents;
   }

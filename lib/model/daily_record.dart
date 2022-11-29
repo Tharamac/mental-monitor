@@ -18,17 +18,26 @@ class DailyRecord {
       'DailyRecord(recordDate: $recordDate, moodLevel: $moodLevel, howWasYourDay: $howWasYourDay, sleepTime: $sleepTime)';
 
   // factory DailyRecord.fromJson(Map<String, dynamic> json)
-  DailyRecord.fromJson(Map<String, dynamic> json)
-      : recordDate = DateTime.parse(json["record_date"]),
-        moodLevel = json["mood_level"],
-        howWasYourDay = json["how_was_your_day"],
-        sleepTime = json["sleep_time"];
+  // DailyRecord.fromJson(Map<String, dynamic> json)
+  //     : recordDate = DateTime.parse(json["record_date"]),
+  //       moodLevel = json["mood_level"],
+  //       howWasYourDay = json["how_was_your_day"],
+  //       sleepTime = Duration(minutes: json["sleep_time"]);
+
+  factory DailyRecord.fromJson(Map<String, dynamic> json) {
+    return DailyRecord(
+      recordDate: DateTime.parse(json["record_date"]),
+      moodLevel: json["mood_level"],
+      howWasYourDay: json["how_was_your_day"],
+      sleepTime: Duration(minutes: json["sleep_time"]),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         'record_date': recordDate.toIso8601String(),
         'mood_level': moodLevel,
         'how_was_your_day': howWasYourDay,
-        'sleep_time': sleepTime
+        'sleep_time': sleepTime.inMinutes
       };
 
   static List<String> get getFieldName =>
