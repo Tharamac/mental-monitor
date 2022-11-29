@@ -22,11 +22,16 @@ class UpdateDailyRecord extends UserSessionEvent {
   const UpdateDailyRecord(this.dailyRecord);
 }
 
-class ArchiveRecord extends UserSessionEvent{
+class ArchiveRecord extends UserSessionEvent {
   //   // final DailyRecord dailyRecord;
   // const UpdateDailyRecord(this.dailyRecord);
 }
 
+class UpdateNotifiedTime extends UserSessionEvent {
+  //   // final DailyRecord dailyRecord;
+  final TimeOfDay notifiedTime;
+  const UpdateNotifiedTime(this.notifiedTime);
+}
 
 // class RegisterUser extends UserEvent {}
 

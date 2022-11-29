@@ -30,4 +30,7 @@ class DailyRecord {
         'how_was_your_day': howWasYourDay,
         'sleep_time': sleepTime
       };
+
+  static List<String> get getFieldName =>
+      ['Record Date', 'Record Time', 'Mood Level', 'Description', 'Sleep Time'];
 }

@@ -13,7 +13,7 @@ final emotionSliderPalette1 = [
   Colors.blue[600],
 ];
 
-final emotionSliderPalette2 = [
+final moodSliderPalette2 = [
   Colors.red[900],
   Colors.red[500],
   Colors.orange[800],

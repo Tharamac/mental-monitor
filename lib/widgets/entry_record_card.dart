@@ -22,7 +22,7 @@ class EntryRecordCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final widgetColor = useDefaultColor
         ? Colors.lightBlue[500]
-        : emotionSliderPalette2[record.moodLevel - 1];
+        : moodSliderPalette2[record.moodLevel - 1];
 
     return Card(
       color: widgetColor,
