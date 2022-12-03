@@ -21,7 +21,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tzData;
 import 'pages/home_page.dart';
 
-const useMockData = true;
+const useMockData = false;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = 'th';
@@ -36,8 +36,11 @@ void main() async {
       mockUserData.toJson(),
     ));
   }
-  final value = await FileManager(fileName: currentUserFile).readData();
-  currentUserData = jsonDecode(value);
+  currentUserData = await FileManager(fileName: currentUserFile)
+      .readData()
+      .then((value) => jsonDecode(value) as Map<String, dynamic>?,
+          onError: (e) => null);
+
   await LocalNoticeService().setup();
   // DateTime.parse(currentUserData["notified_time"])
   // todo: load actual setting on home_page

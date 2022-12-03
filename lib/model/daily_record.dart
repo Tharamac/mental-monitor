@@ -41,5 +41,5 @@ class DailyRecord {
       };
 
   static List<String> get getFieldName =>
-      ['Record Date', 'Record Time', 'Mood Level', 'Description', 'Sleep Time'];
+      ['วันที่บันทึก', 'เวลาบันทึก', 'ระดับอารมณ์', 'บันทึก', 'เวลานอนรวม'];
 }
