@@ -17,8 +17,7 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
     on<RegisterUserEvent>((event, emit) {
       final User newUser = User(name: event.newName);
       final FileManager newRecordsFile = FileManager(fileName: currentUserFile);
-      // newRecordsFile.writedata(newUser.toJson().toString());
-      print(newUser);
+      newRecordsFile.writedata(newUser.toJson().toString());
       emit(state.copyWith(name: event.newName));
     });
 
@@ -50,7 +49,7 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
       final savedUser = User(name: state.name, records: newList);
       final FileManager updateRecordsFile =
           FileManager(fileName: currentUserFile);
-// updateRecordsFile.writedata(savedUser.toJson().toString());
+      updateRecordsFile.writedata(savedUser.toJson().toString());
 
       emit(state.copyWith(todayRecord: event.dailyRecord));
     }));
@@ -77,7 +76,7 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
           notificationTime: notifiedTime);
       final FileManager updateRecordsFile =
           FileManager(fileName: currentUserFile);
-      //updateRecordsFile.writedata(savedUser.toJson().toString());
+      updateRecordsFile.writedata(savedUser.toJson().toString());
 
       emit(state.copyWith(
         notifiedTime: notifiedTime,

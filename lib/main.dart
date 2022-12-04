@@ -69,6 +69,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final child = MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'MoodMonitor',
       theme: ThemeData(
         primarySwatch: Colors.blue,
