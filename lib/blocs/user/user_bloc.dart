@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:bloc/bloc.dart';
@@ -17,7 +18,9 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
     on<RegisterUserEvent>((event, emit) {
       final User newUser = User(name: event.newName);
       final FileManager newRecordsFile = FileManager(fileName: currentUserFile);
-      newRecordsFile.writedata(newUser.toJson().toString());
+      newRecordsFile.writedata(jsonEncode(
+      newUser.toJson(),
+    ));
       emit(state.copyWith(name: event.newName));
     });
 
@@ -49,7 +52,9 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
       final savedUser = User(name: state.name, records: newList);
       final FileManager updateRecordsFile =
           FileManager(fileName: currentUserFile);
-      updateRecordsFile.writedata(savedUser.toJson().toString());
+      updateRecordsFile.writedata(jsonEncode(
+        savedUser.toJson(),
+      ));
 
       emit(state.copyWith(todayRecord: event.dailyRecord));
     }));
@@ -76,7 +81,9 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
           notificationTime: notifiedTime);
       final FileManager updateRecordsFile =
           FileManager(fileName: currentUserFile);
-      updateRecordsFile.writedata(savedUser.toJson().toString());
+      updateRecordsFile.writedata(jsonEncode(
+        savedUser.toJson(),
+      ));
 
       emit(state.copyWith(
         notifiedTime: notifiedTime,

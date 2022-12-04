@@ -36,10 +36,12 @@ void main() async {
       mockUserData.toJson(),
     ));
   }
-  currentUserData = await FileManager(fileName: currentUserFile)
-      .readData()
-      .then((value) => jsonDecode(value) as Map<String, dynamic>?,
-          onError: (e) => null);
+  currentUserData =
+      await FileManager(fileName: currentUserFile).readData().then((value) {
+    print(value);
+    final conv = jsonDecode(value);
+    print(conv);
+  }, onError: (e) => null);
 
   await LocalNoticeService().setup();
   // DateTime.parse(currentUserData["notified_time"])
