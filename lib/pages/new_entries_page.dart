@@ -59,6 +59,7 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                         recordDate: DateTime.now(),
                         moodLevel: _currentSliderValue.toInt(),
                         howWasYourDay: dailynoteController.text,
+      
                         sleepTime: Duration(
                             hours: int.parse(hourDurationController.text),
                             minutes: int.parse(minuteDurationController.text)));

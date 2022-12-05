@@ -45,15 +45,13 @@ class _HomePageState extends State<HomePage> {
 
   clearTodayRecord() {
     cron.schedule(Schedule.parse('0 0 * * *'), () async {
-      print("tick");
       context.read<UserSessionBloc>().add(ArchiveRecord());
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    DateTime today = DateTime(
-        DateTime.now().year + 543, DateTime.now().month, DateTime.now().day);
+  
 
     return Scaffold(
       appBar: AppBar(

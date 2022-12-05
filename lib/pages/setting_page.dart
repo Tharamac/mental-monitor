@@ -108,8 +108,12 @@ class SettingPage extends StatelessWidget {
                   children: [
                     TextButton(
                         onPressed: () async {
-                          final records =
-                              context.read<UserSessionBloc>().state.records;
+                          final state = context.read<UserSessionBloc>().state;
+                          final record_exclude_today = state.records;
+                          final today = state.todayRecord;
+                          final records = (today != null)
+                              ? [today, ...record_exclude_today]
+                              : record_exclude_today;
 
                           var excel = Excel.createExcel();
 
