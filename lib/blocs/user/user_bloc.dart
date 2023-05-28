@@ -44,7 +44,7 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
       emit(
         state.copyWith(
           name: existingUser.name,
-          records: existingUser.records.skip(1).toList(),
+          records: existingUser.records.toList(),
           isTodayRecorded: isTodayRecorded,
           todayRecord: isTodayRecorded ? existingUser.records.first : null,
         ),
@@ -52,9 +52,12 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
     });
 
     on<UpdateDailyRecord>(((event, emit) {
-      final currentList = [event.dailyRecord, ...state.records];
+      var currentList = <DailyRecord>[];
       if (state.todayRecord != null) {
-        currentList.first = event.dailyRecord;
+        state.records.first = event.dailyRecord;
+        currentList = state.records;
+      } else {
+        currentList = [event.dailyRecord, ...state.records];
       }
       final savedUser = User(name: state.name, records: currentList);
       final FileManager updateRecordsFile =
@@ -63,15 +66,16 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
         savedUser.toJson(),
       ));
 
-      emit(state.copyWith(todayRecord: event.dailyRecord));
+      emit(state.copyWith(
+        todayRecord: event.dailyRecord,
+        records: currentList,
+      ));
     }));
     on<ArchiveRecord>((event, emit) {
       if (state.todayRecord == null) return;
-      final newList = [state.todayRecord!, ...state.records];
+      // final newList = [state.todayRecord!, ...state.records];
       emit(state.clearTodayRecord());
-      emit(state.copyWith(
-        records: newList,
-      ));
+      // emit(state.copyWith(records: state.records));
     });
     on<UpdateNotifiedTime>((event, emit) {
       DateTime notifiedTime = DateTime(
@@ -95,5 +99,11 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
         notifiedTime: notifiedTime,
       ));
     });
+    on<ReDailyRecord>(((event, emit) {
+      emit(state.copyWith(
+        isTodayRecorded: false,
+        todayRecord: null,
+      ));
+    }));
   }
 }

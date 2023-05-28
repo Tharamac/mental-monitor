@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     clearTodayRecord();
-      
+
     widget.currentUserData.fold((newUser) {
       context.read<UserSessionBloc>().add(RegisterUserEvent(newUser));
     }, (existingUser) {
@@ -39,20 +39,18 @@ class _HomePageState extends State<HomePage> {
           .read<UserSessionBloc>()
           .add(ImportExistingUserEvent(existingUser));
     });
-  
+
     super.initState();
   }
 
   clearTodayRecord() {
     cron.schedule(Schedule.parse('0 0 * * *'), () async {
-      context.read<UserSessionBloc>().add(ArchiveRecord());
+      context.read<UserSessionBloc>().add(ReDailyRecord());
     });
   }
 
   @override
   Widget build(BuildContext context) {
-  
-
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -119,7 +117,7 @@ class _HomePageState extends State<HomePage> {
 
                   // if(state.todayRecord )
 
-                  Flexible(flex: 1, child: _buildTodayRecord(state)),
+                  Flexible(flex: 2, child: _buildTodayRecord(state)),
                   // Flexible(
                   //   child: SingleChildScrollView(
                   //     child: Text(),
@@ -137,7 +135,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   Expanded(
-                      flex: 2,
+                      flex: 3,
                       child: (state.records.isNotEmpty)
                           ? ListView(
                               children: state.records
