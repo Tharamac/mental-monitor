@@ -12,7 +12,9 @@ import 'package:mental_monitor/blocs/user/user_bloc.dart';
 import 'package:mental_monitor/constant/palette.dart';
 import 'package:mental_monitor/pages/new_entries_page.dart';
 import 'package:mental_monitor/util.dart';
+import 'package:mental_monitor/widgets/line_chart_widget.dart';
 import 'package:mental_monitor/widgets/menu_drawer.dart';
+import 'package:mental_monitor/widgets/zoomable_chart.dart';
 
 import '../widgets/entry_record_card.dart';
 
@@ -61,11 +63,26 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       drawer: const MainMenuDrawerWidget(),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (builder) => const NewMentalEntryPage()));
+        },
+        extendedTextStyle: GoogleFonts.ibmPlexSansThai(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+        ),
+        label: Text(
+          'เพิ่ม/แก้ไขบันทึก',
+        ),
+        icon: const Icon(
+          Icons.edit_calendar_outlined,
+        ),
+      ),
 
       body: BlocBuilder<UserSessionBloc, UserSessionState>(
         builder: (context, state) {
-          return SafeArea(
-            child: Padding(
+          return  Padding(
               padding: const EdgeInsets.all(8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,32 +93,32 @@ class _HomePageState extends State<HomePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "บันทึกของวันนี้",
+                          "สรุประดับอารมณ์ย้อนหลัง",
                           style: GoogleFonts.ibmPlexSansThai(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        TextButton.icon(
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (builder) =>
-                                    const NewMentalEntryPage()));
-                          },
-                          icon: Icon(
-                              (state.todayRecord == null)
-                                  ? Icons.add
-                                  : Icons.edit,
-                              color: Colors.black),
-                          label: Text(
-                            (state.todayRecord == null)
-                                ? "สร้างบันทึก"
-                                : "แก้ไข",
-                            style: GoogleFonts.ibmPlexSansThai(
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black),
-                          ),
-                        ),
+                        // TextButton.icon(
+                        //   onPressed: () {
+                        //     Navigator.of(context).push(MaterialPageRoute(
+                        //         builder: (builder) =>
+                        //             const NewMentalEntryPage()));
+                        //   },
+                        //   icon: Icon(
+                        //       (state.todayRecord == null)
+                        //           ? Icons.add
+                        //           : Icons.edit,
+                        //       color: Colors.black),
+                        //   label: Text(
+                        //     (state.todayRecord == null)
+                        //         ? "สร้างบันทึก"
+                        //         : "แก้ไข",
+                        //     style: GoogleFonts.ibmPlexSansThai(
+                        //         fontWeight: FontWeight.w400,
+                        //         color: Colors.black),
+                        //   ),
+                        // ),
                         // IconButton(
                         //     onPressed: () {
                         //       Navigator.of(context).push(MaterialPageRoute(
@@ -116,8 +133,15 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   // if(state.todayRecord )
+                  AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: ZoomableChart(
+                          maxX: 7,
+                          builder: (minX, maxX) {
+                            return LineChartWidget(minX, maxX);
+                          })),
 
-                  Flexible(flex: 2, child: _buildTodayRecord(state)),
+                  // Flexible(flex: 2, child: _buildTodayRecord(state)),
                   // Flexible(
                   //   child: SingleChildScrollView(
                   //     child: Text(),
@@ -148,7 +172,7 @@ class _HomePageState extends State<HomePage> {
                           : const Center(child: Text("ไม่มีบันทึกที่ผ่านมา"))),
                 ],
               ),
-            ),
+            
           );
         },
       ),

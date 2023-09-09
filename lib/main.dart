@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:dartz/dartz.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:intl/date_symbol_data_local.dart';
@@ -15,10 +14,7 @@ import 'package:mental_monitor/blocs/user/user_bloc.dart';
 import 'package:mental_monitor/constant/constant.dart';
 import 'package:mental_monitor/data_mock.dart';
 import 'package:mental_monitor/file_manager.dart';
-import 'package:mental_monitor/model/daily_record.dart';
-import 'package:mental_monitor/model/user.dart';
 import 'package:mental_monitor/pages/welcome_page.dart';
-import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tzData;
 import 'pages/home_page.dart';
 
