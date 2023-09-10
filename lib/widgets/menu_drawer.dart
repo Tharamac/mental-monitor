@@ -27,7 +27,6 @@ class MainMenuDrawerWidget extends StatelessWidget {
               alignment: Alignment.bottomRight,
               child: BlocBuilder<UserSessionBloc, UserSessionState>(
                 builder: (context, state) {
-                  
                   return Text(
                     'ยินดีต้อนรับ\nคุณ${state.name}',
                     style: GoogleFonts.ibmPlexSansThai(
@@ -82,6 +81,7 @@ class MainMenuDrawerWidget extends StatelessWidget {
               //     )),
               TextButton.icon(
                   onPressed: () {
+                    Navigator.of(context).pop();
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: ((context) => SettingPage())));
                   },
