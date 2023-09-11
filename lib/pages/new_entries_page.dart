@@ -137,13 +137,9 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                         moodLevel: _currentSliderValue.toInt(),
                         howWasYourDay: dailynoteController.text,
                         sleepTime: Duration(
-                            hours: int.parse(hourDurationController.text),
-                            minutes: int.parse(minuteDurationController.text)));
-
-                    // pass
-                    // print(todayRecord.toJson());
-                    // print(DailyRecord.fromJson(todayRecord.toJson()));
-                    // pass
+                          hours: int.parse(hourDurationController.text),
+                          // minutes: int.parse(minuteDurationController.text)
+                        ));
                     context
                         .read<UserSessionBloc>()
                         .add(UpdateDailyRecord(todayRecord));

@@ -82,97 +82,96 @@ class _HomePageState extends State<HomePage> {
 
       body: BlocBuilder<UserSessionBloc, UserSessionState>(
         builder: (context, state) {
-          return  Padding(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "สรุประดับอารมณ์ย้อนหลัง",
-                          style: GoogleFonts.ibmPlexSansThai(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
+          return Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "สรุประดับอารมณ์ย้อนหลัง",
+                        style: GoogleFonts.ibmPlexSansThai(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
                         ),
-                        // TextButton.icon(
-                        //   onPressed: () {
-                        //     Navigator.of(context).push(MaterialPageRoute(
-                        //         builder: (builder) =>
-                        //             const NewMentalEntryPage()));
-                        //   },
-                        //   icon: Icon(
-                        //       (state.todayRecord == null)
-                        //           ? Icons.add
-                        //           : Icons.edit,
-                        //       color: Colors.black),
-                        //   label: Text(
-                        //     (state.todayRecord == null)
-                        //         ? "สร้างบันทึก"
-                        //         : "แก้ไข",
-                        //     style: GoogleFonts.ibmPlexSansThai(
-                        //         fontWeight: FontWeight.w400,
-                        //         color: Colors.black),
-                        //   ),
-                        // ),
-                        // IconButton(
-                        //     onPressed: () {
-                        //       Navigator.of(context).push(MaterialPageRoute(
-                        //           builder: (builder) =>
-                        //               const NewMentalEntryPage()));
-                        //     },
-                        //     icon: Icon(state.todayRecord == null
-                        //         ? Icons.add
-                        //         : Icons.edit)),
-                      ],
-                    ),
-                  ),
-
-                  // if(state.todayRecord )
-                  AspectRatio(
-                      aspectRatio: 16 / 9,
-                      child: ZoomableChart(
-                          maxX: 7,
-                          builder: (minX, maxX) {
-                            return LineChartWidget(minX, maxX);
-                          })),
-
-                  // Flexible(flex: 2, child: _buildTodayRecord(state)),
-                  // Flexible(
-                  //   child: SingleChildScrollView(
-                  //     child: Text(),
-                  //   ),
-                  // ),
-                  const Divider(),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(
-                      "บันทึกที่ผ่านมา",
-                      style: GoogleFonts.ibmPlexSansThai(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
                       ),
+                      // TextButton.icon(
+                      //   onPressed: () {
+                      //     Navigator.of(context).push(MaterialPageRoute(
+                      //         builder: (builder) =>
+                      //             const NewMentalEntryPage()));
+                      //   },
+                      //   icon: Icon(
+                      //       (state.todayRecord == null)
+                      //           ? Icons.add
+                      //           : Icons.edit,
+                      //       color: Colors.black),
+                      //   label: Text(
+                      //     (state.todayRecord == null)
+                      //         ? "สร้างบันทึก"
+                      //         : "แก้ไข",
+                      //     style: GoogleFonts.ibmPlexSansThai(
+                      //         fontWeight: FontWeight.w400,
+                      //         color: Colors.black),
+                      //   ),
+                      // ),
+                      // IconButton(
+                      //     onPressed: () {
+                      //       Navigator.of(context).push(MaterialPageRoute(
+                      //           builder: (builder) =>
+                      //               const NewMentalEntryPage()));
+                      //     },
+                      //     icon: Icon(state.todayRecord == null
+                      //         ? Icons.add
+                      //         : Icons.edit)),
+                    ],
+                  ),
+                ),
+
+                // if(state.todayRecord )
+                AspectRatio(
+                    aspectRatio: 2,
+                    child: ZoomableChart(
+                        maxX: 7,
+                        builder: (minX, maxX) {
+                          return LineChartWidget(minX, maxX);
+                        })),
+
+                // Flexible(flex: 2, child: _buildTodayRecord(state)),
+                // Flexible(
+                //   child: SingleChildScrollView(
+                //     child: Text(),
+                //   ),
+                // ),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Text(
+                    "บันทึกที่ผ่านมา",
+                    style: GoogleFonts.ibmPlexSansThai(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Expanded(
-                      flex: 3,
-                      child: (state.records.isNotEmpty)
-                          ? ListView(
-                              children: state.records
-                                  .map((record) => EntryRecordCard(
-                                        record: record,
-                                        // useDefaultColor: true,
-                                      ))
-                                  .toList(),
-                            )
-                          : const Center(child: Text("ไม่มีบันทึกที่ผ่านมา"))),
-                ],
-              ),
-            
+                ),
+                Expanded(
+                    flex: 3,
+                    child: (state.records.isNotEmpty)
+                        ? ListView(
+                            children: state.records
+                                .map((record) => EntryRecordCard(
+                                      record: record,
+                                      useDefaultColor: true,
+                                    ))
+                                .toList(),
+                          )
+                        : const Center(child: Text("ไม่มีบันทึกที่ผ่านมา"))),
+              ],
+            ),
           );
         },
       ),
@@ -231,7 +230,7 @@ class _HomePageState extends State<HomePage> {
                             color: Colors.black,
                           ),
                           Text(
-                            ' ${prettyDuration(tdRec.sleepTime, locale: DurationLocale.fromLanguageCode('th')!)}',
+                            ' ${tdRec.sleepTime.inHours} ชั่วโมง',
                             style: GoogleFonts.ibmPlexSansThai(
                                 fontWeight: FontWeight.w600,
                                 // height: 1.2,
