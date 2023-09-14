@@ -27,6 +27,15 @@ class RecordFormCubit extends Cubit<RecordFormState> {
     emit(state.copyWith(newRecord: selectRecord));
   }
 
+  void updateData(
+      int? newMoodLevel, String? newHowWasYourDay, Duration? newSleepTime) {
+    if (state.currentRecord != null) {
+      emit(state.copyWith(
+          newRecord: state.currentRecord!
+              .copyWith(newMoodLevel, newHowWasYourDay, newSleepTime)));
+    }
+  }
+
   // void updateNotifiedTimeSetting(TimeOfDay time) {
   //   LocalNoticeService().cancelNotification(0);
   //   LocalNoticeService().showDailyNotificationAtTime(0, "วันนี้เป็นอย่างไรบ้าง",

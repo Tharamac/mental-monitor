@@ -42,6 +42,14 @@ class DailyRecord extends Equatable {
     );
   }
 
+  DailyRecord copyWith(int? newMoodLevel, String? newHowWasYourDay,
+          Duration? newSleepTime) =>
+      DailyRecord(
+          recordDate: recordDate,
+          moodLevel: newMoodLevel ?? moodLevel,
+          howWasYourDay: newHowWasYourDay ?? howWasYourDay,
+          sleepTime: newSleepTime ?? sleepTime);
+
   Map<String, dynamic> toJson() => {
         'record_date': recordDate.toIso8601String(),
         'mood_level': moodLevel,
