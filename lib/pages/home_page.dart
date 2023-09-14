@@ -8,6 +8,7 @@ import 'dart:math';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mental_monitor/api/notification_api.dart';
+import 'package:mental_monitor/blocs/record_form/record_form_cubit.dart';
 import 'package:mental_monitor/blocs/user/user_bloc.dart';
 import 'package:mental_monitor/constant/palette.dart';
 import 'package:mental_monitor/pages/new_entries_page.dart';
@@ -65,6 +66,8 @@ class _HomePageState extends State<HomePage> {
       drawer: const MainMenuDrawerWidget(),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
+          final latestRecords = context.read<UserSessionBloc>().state.records;
+          context.read<RecordFormCubit>().loadLatestRecords(latestRecords);
           Navigator.of(context).push(MaterialPageRoute(
               builder: (builder) => const NewMentalEntryPage()));
         },

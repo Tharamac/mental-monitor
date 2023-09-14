@@ -1,7 +1,8 @@
 import 'package:duration/duration.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-class DailyRecord {
+class DailyRecord extends Equatable {
   final DateTime recordDate;
   final int moodLevel;
   final String howWasYourDay;
@@ -24,12 +25,20 @@ class DailyRecord {
   //       howWasYourDay = json["how_was_your_day"],
   //       sleepTime = Duration(minutes: json["sleep_time"]);
 
+  factory DailyRecord.emptyRecord(DateTime date) {
+    return DailyRecord(
+        recordDate: date,
+        moodLevel: 5,
+        howWasYourDay: "",
+        sleepTime: Duration.zero);
+  }
+
   factory DailyRecord.fromJson(Map<String, dynamic> json) {
     return DailyRecord(
       recordDate: DateTime.parse(json["record_date"]),
       moodLevel: json["mood_level"],
       howWasYourDay: json["how_was_your_day"],
-      sleepTime: Duration(minutes: json["sleep_time"]),
+      sleepTime: Duration(hours: json["sleep_time"]),
     );
   }
 
@@ -37,9 +46,13 @@ class DailyRecord {
         'record_date': recordDate.toIso8601String(),
         'mood_level': moodLevel,
         'how_was_your_day': howWasYourDay,
-        'sleep_time': sleepTime.inMinutes
+        'sleep_time': sleepTime.inHours
       };
 
   static List<String> get getFieldName =>
       ['วันที่บันทึก', 'เวลาบันทึก', 'ระดับอารมณ์', 'บันทึก', 'เวลานอนรวม'];
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [recordDate, moodLevel, howWasYourDay, sleepTime];
 }

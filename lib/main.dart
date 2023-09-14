@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:mental_monitor/api/notification_api.dart';
 import 'package:mental_monitor/blocs/app_bloc_observer.dart';
 import 'package:mental_monitor/blocs/notified_time/notified_time_cubit.dart';
+import 'package:mental_monitor/blocs/record_form/record_form_cubit.dart';
 import 'package:mental_monitor/blocs/user/user_bloc.dart';
 import 'package:mental_monitor/constant/constant.dart';
 import 'package:mental_monitor/data_mock.dart';
@@ -110,6 +111,9 @@ class MyApp extends StatelessWidget {
       ),
       BlocProvider<NotfiedTimeCubit>(
         create: (BuildContext context) => NotfiedTimeCubit(),
+      ),
+      BlocProvider<RecordFormCubit>(
+        create: (BuildContext context) => RecordFormCubit(),
       ),
     ], child: child);
   }
