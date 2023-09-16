@@ -74,6 +74,8 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
         records: currentList,
       ));
     }));
+
+    
     on<ArchiveRecord>((event, emit) {
       if (state.todayRecord == null) return;
       // final newList = [state.todayRecord!, ...state.records];

@@ -6,17 +6,17 @@ import 'package:mental_monitor/model/user.dart';
 
 @immutable
 class RecordFormState {
-  final DailyRecord? currentRecord;
+  final DailyRecord? currentWorkingRecord;
   final List<DailyRecord>? updatedRecords;
 
  const RecordFormState({
     this.updatedRecords,
-    this.currentRecord,
+    this.currentWorkingRecord,
   });
 
   RecordFormState copyWith({DailyRecord? newRecord, List<DailyRecord>? newUpdatedRecords}) =>
       RecordFormState(
-        currentRecord: newRecord ?? currentRecord,
+        currentWorkingRecord: newRecord ?? currentWorkingRecord,
         updatedRecords: newUpdatedRecords ?? updatedRecords,
       );
   //     {String? name,
