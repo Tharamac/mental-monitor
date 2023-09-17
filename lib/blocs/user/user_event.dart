@@ -19,7 +19,8 @@ class ImportExistingUserEvent extends UserSessionEvent {
 
 class UpdateDailyRecord extends UserSessionEvent {
   final DailyRecord dailyRecord;
-  const UpdateDailyRecord(this.dailyRecord);
+  final void Function(List<DailyRecord>)? callback;
+  const UpdateDailyRecord(this.dailyRecord, {this.callback});
 }
 
 class ArchiveRecord extends UserSessionEvent {

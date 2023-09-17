@@ -45,6 +45,33 @@ class RecordFormCubit extends Cubit<RecordFormState> {
           newRecord: state.currentWorkingRecord!
               .copyWith(newMoodLevel, newHowWasYourDay, newSleepTime)));
     }
+
+    // void saveRecordData(DailyRecord dailyrecord) {
+    //   var userRecord =
+    //       List<DailyRecord>.from(state.updatedRecords ?? <DailyRecord>[]);
+    //   final existDataIndex = userRecord.indexWhere((element) => element
+    //       .recordDate.dateOnly
+    //       .isAtSameMomentAs(dailyrecord.recordDate.dateOnly));
+    //   if (existDataIndex != -1) {
+    //     // found exist use replacement
+    //     userRecord[existDataIndex] = dailyrecord;
+    //   } else {
+    //     // new entry
+    //     userRecord = [dailyrecord, ...?state.updatedRecords];
+    //   }
+    //   userRecord.sort((a, b) => b.recordDate.dateOnly.compareTo(a.recordDate.dateOnly));
+    //   final savedUser = User(name: state.name, records: userRecord);
+    //   final FileManager updateRecordsFile =
+    //       FileManager(fileName: currentUserFile);
+    //   updateRecordsFile.writedata(jsonEncode(
+    //     savedUser.toJson(),
+    //   ));
+
+    //   emit(state.copyWith(
+    //     todayRecord: event.dailyRecord,
+    //     records: currentList,
+    //   ));
+    // }
   }
 
   // void updateNotifiedTimeSetting(TimeOfDay time) {
