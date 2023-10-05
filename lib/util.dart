@@ -7,6 +7,11 @@ String formatDateInThai(DateTime date, {bool shorten = false}) {
       : DateFormat.yMMMMd().format(thaiDate).replaceAll('ค.ศ.', 'พ.ศ.');
 }
 
+String formatShortBuddhismYear(DateTime date) {
+  final thaiDate = DateTime(date.year + 543, date.month, date.day);
+  return DateFormat.MMMd('th_TH').format(thaiDate).replaceAll('ค.ศ.', 'พ.ศ.');
+}
+
 // String formatDateInThaiAbbr(DateTime date) {
 //   final thaiDate = DateTime(date.year + 543, date.month, date.day);
 //   return DateFormat.yMMMMd().format(thaiDate).replaceAll('ค.ศ.', 'พ.ศ.');
