@@ -136,15 +136,41 @@ class _HomePageState extends State<HomePage> {
                 ),
 
                 // if(state.todayRecord )
-                AspectRatio(
-                    aspectRatio: 2,
-                    child: ZoomableChart(
-                        maxX: 7,
-                        builder: (minX, maxX) {
-                          return LineChartWidget(minX, maxX);
-                        })),
+                // todo:: (can weekend)
+                // - wednesday :: put real data
+                // - thursday :: axis decoration
 
-                // Flexible(flex: 2, child: _buildTodayRecord(state)),
+                AspectRatio(
+                  aspectRatio: 2,
+                  //     child: ZoomableChart(
+                  //         maxX: 7,
+                  //         builder: (minX, maxX) {
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Scrollbar(
+                      thickness: 15,
+                      trackVisibility: true,
+                      thumbVisibility: true,
+                      scrollbarOrientation: ScrollbarOrientation.bottom,
+                      // controller: _firstController,
+                      child: SingleChildScrollView(
+                        reverse: true,
+                        clipBehavior: Clip.none,
+                        padding: EdgeInsets.zero,
+                        physics: BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        child: SizedBox(
+                            width: 1000,
+                            // color: Colors.amber,
+                            child: LineChartWidget(0, 29)),
+                        // }),
+                      ),
+                    ),
+                  ),
+                ),
+                // AspectRatio(
+                // aspectRatio: 2,
+                // child: _buildTodayRecord(state)),
                 // Flexible(
                 //   child: SingleChildScrollView(
                 //     child: Text(),
