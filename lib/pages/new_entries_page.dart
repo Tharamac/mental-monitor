@@ -252,32 +252,12 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                 // dropdownMenuEntries: colorEntries,x
                                 onChanged: (int? currentDayOffset) async {
                                   final backupSelectedDayOffset = selectedDay;
-                                  // final recentRecord = DailyRecord(
-                                  //     recordDate: DateTime.now().add(Duration(
-                                  //         days: backupSelectedDayOffset)),
-                                  //     moodLevel: workingState
-                                  //         .currentWorkingRecord!.moodLevel
-                                  //         .toInt(),
-                                  //     howWasYourDay: dailynoteController.text,
-                                  //     sleepTime: canSleep
-                                  //         ? Duration(
-                                  //             hours: int.parse(
-                                  //                 hourDurationController.text),
-                                  //             // minutes: int.parse(minuteDurationController.text)
-                                  //           )
-                                  //         : Duration.zero);
                                   setState(() {
                                     selectedDay = currentDayOffset!;
                                   });
                                   final selectedDate = DateTime.now()
                                       .dateOnly
                                       .add(Duration(days: currentDayOffset!));
-                                  // final currentWorkingRecord =
-                                  //     workingState.currentWorkingRecord;
-                                  // bool isChanged = currentWorkingRecord
-                                  //         ?.isUpdate(recentRecord) ??
-                                  //     true;
-                                  // if (isChanged) {
                                   await confirmChangingDateDialog(
                                       currentDate: DateTime.now().dateOnly.add(
                                           Duration(
@@ -722,7 +702,11 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('แจ้งเตือนการเปลี่ยนวันที่'),
+          title: Text(
+            'แจ้งเตือนการเปลี่ยนวันที่',
+            style: GoogleFonts.ibmPlexSansThai(
+                fontSize: 16, fontWeight: FontWeight.bold),
+          ),
           content: Text(
               'คุณต้องการจะบันทึกข้อมูลของวันที่ ${formatDateInThai(currentDate)} หรือไม่ (การเปลี่ยนวันที่ข้อมูลที่กรอกเพิ่มจะถูกลบหากไม่บันทึก)'),
           actions: <Widget>[

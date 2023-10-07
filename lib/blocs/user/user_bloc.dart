@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
@@ -19,10 +20,17 @@ part 'user_state.dart';
 
 class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
   UserSessionBloc() : super(UserInitial()) {
+    SplayTreeMap<DateTime, int> generateGraphData(List<DailyRecord> records) {
+      SplayTreeMap<DateTime, int> map = SplayTreeMap.from({
+        for (DailyRecord rec in records) rec.recordDate.dateOnly: rec.moodLevel
+      });
+      return map;
+    }
+
     on<RegisterUserEvent>((event, emit) {
       final User newUser = User(name: event.newName);
       final FileManager newRecordsFile = FileManager(fileName: currentUserFile);
-      print("Registered ${jsonEncode(newUser.toJson())}");
+      // print("Registered ${jsonEncode(newUser.toJson())}");
       newRecordsFile.writedata(jsonEncode(
         newUser.toJson(),
       ));
@@ -44,14 +52,17 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
         isTodayRecorded = today.compareTo(latestRecordedDate) == 0;
       }
 
+      final graphData = generateGraphData(existingUser.records);
+      print(graphData);
+
       // print(today.compareTo(latestRecordedDate) == 0);
       emit(
         state.copyWith(
-          name: existingUser.name,
-          records: existingUser.records.toList(),
-          isTodayRecorded: isTodayRecorded,
-          todayRecord: isTodayRecorded ? existingUser.records.first : null,
-        ),
+            name: existingUser.name,
+            records: existingUser.records,
+            isTodayRecorded: isTodayRecorded,
+            todayRecord: isTodayRecorded ? existingUser.records.first : null,
+            graphData: graphData),
       );
     });
 
@@ -78,9 +89,9 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
       ));
 
       emit(state.copyWith(
-        todayRecord: event.dailyRecord,
-        records: userRecord,
-      ));
+          todayRecord: event.dailyRecord,
+          records: userRecord,
+          graphData: generateGraphData(userRecord)));
 
       if (event.callback != null) {
         event.callback?.call(userRecord);

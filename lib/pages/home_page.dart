@@ -31,6 +31,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final cron = Cron();
+  final controller = ScrollController();
   @override
   void initState() {
     clearTodayRecord();
@@ -154,7 +155,7 @@ class _HomePageState extends State<HomePage> {
                       scrollbarOrientation: ScrollbarOrientation.bottom,
                       // controller: _firstController,
                       child: SingleChildScrollView(
-                        reverse: true,
+                        // reverse: true,
                         clipBehavior: Clip.none,
                         padding: EdgeInsets.zero,
                         physics: BouncingScrollPhysics(),
@@ -162,7 +163,19 @@ class _HomePageState extends State<HomePage> {
                         child: SizedBox(
                             width: 1000,
                             // color: Colors.amber,
-                            child: LineChartWidget(0, 29)),
+                            child: BlocSelector<UserSessionBloc,
+                                UserSessionState, Map<DateTime, int>>(
+                              selector: (state) {
+                                return state.graphData;
+                              },
+                              builder: (context, data) {
+                                return LineChartWidget(
+                                  0,
+                                  29,
+                                  data: data,
+                                );
+                              },
+                            )),
                         // }),
                       ),
                     ),
