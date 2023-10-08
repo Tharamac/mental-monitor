@@ -39,17 +39,16 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
 
     // _currentSliderValue = snapshot.todayRecord?.moodLevel.toDouble() ?? 5.0;
     dailynoteController.text = snapshot?.howWasYourDay ?? "";
-    // hourDurationController.text =
-    //     snapshot?.sleepTime.inHours.toString() ?? "";
-    // minuteDurationController.text =
-    //     snapshot?.sleepTime.inMinutes.remainder(60).toString() ?? "";
-    if (snapshot?.sleepTime.inHours == 0) {
+    if (snapshot?.sleepTime == null) {
+      canSleep.value = true;
+      hourDurationController.text = "";
+    } else if (snapshot?.sleepTime!.inHours == 0) {
       canSleep.value = false;
       hourDurationController.text = "";
     } else {
       canSleep.value = true;
       hourDurationController.text =
-          snapshot?.sleepTime.inHours.toString() ?? "";
+          snapshot?.sleepTime!.inHours.toString() ?? "";
     }
     super.initState();
   }
@@ -150,8 +149,12 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
               final currentHowwasYourDay =
                   state.currentWorkingRecord?.howWasYourDay ?? "";
               dailynoteController.text = currentHowwasYourDay;
-              final currentSleepTime =
-                  state.currentWorkingRecord?.sleepTime.inHours.toString() ??
+              if(state.currentWorkingRecord?.sleepTime == null){
+                canSleep.value = true;
+                hourDurationController.text = "";
+              }else{
+                     final currentSleepTime =
+                  state.currentWorkingRecord?.sleepTime!.inHours.toString() ??
                       "";
               if (currentSleepTime == "0") {
                 canSleep.value = false;
@@ -160,6 +163,8 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                 canSleep.value = true;
                 hourDurationController.text = currentSleepTime;
               }
+              }
+         
             },
           ),
         ],

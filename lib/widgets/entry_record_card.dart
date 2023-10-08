@@ -64,9 +64,10 @@ class EntryRecordCard extends StatelessWidget {
                           color: Colors.black,
                         ),
                         Text(
-                          (record.sleepTime.inHours == 0)
+                          (record.sleepTime?.inHours == null ||
+                                  (record.sleepTime?.inHours ?? 0) == 0)
                               ? ' ไม่ได้นอน'
-                              : ' ${record.sleepTime.inHours} ชั่วโมง',
+                              : ' ${record.sleepTime!.inHours} ชั่วโมง',
                           style: GoogleFonts.ibmPlexSansThai(
                               fontWeight: FontWeight.w600,
                               // height: 1.4,

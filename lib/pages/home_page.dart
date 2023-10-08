@@ -268,7 +268,7 @@ class _HomePageState extends State<HomePage> {
                             color: Colors.black,
                           ),
                           Text(
-                            ' ${tdRec.sleepTime.inHours} ชั่วโมง',
+                            ' ${tdRec.sleepTime?.inHours ?? 0} ชั่วโมง',
                             style: GoogleFonts.ibmPlexSansThai(
                                 fontWeight: FontWeight.w600,
                                 // height: 1.2,
