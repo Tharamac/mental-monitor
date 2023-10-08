@@ -176,8 +176,9 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                 TextButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        final todayRecord = DailyRecord(
-                            recordDate: DateTime.now(),
+                        final record = DailyRecord(
+                            recordDate:
+                                DateTime.now().add(Duration(days: selectedDay)),
                             moodLevel: context
                                 .read<RecordFormCubit>()
                                 .state
@@ -193,7 +194,7 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                   )
                                 : Duration.zero);
                         context.read<UserSessionBloc>().add(UpdateDailyRecord(
-                            todayRecord)); // todo: support every date
+                            record)); // todo: support every date
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text("บันทึกสำเร็จ",
                               style: GoogleFonts.ibmPlexSansThai(
@@ -262,64 +263,6 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                       currentDate: DateTime.now().dateOnly.add(
                                           Duration(
                                               days: backupSelectedDayOffset)),
-                                      onConfirmSave: () {
-                                        // save into map
-                                        if (_formKey.currentState!.validate()) {
-                                          final todayRecord = DailyRecord(
-                                              recordDate: DateTime.now(),
-                                              moodLevel: context
-                                                  .read<RecordFormCubit>()
-                                                  .state
-                                                  .currentWorkingRecord!
-                                                  .moodLevel
-                                                  .toInt(),
-                                              howWasYourDay:
-                                                  dailynoteController.text,
-                                              sleepTime: canSleep.value
-                                                  ? Duration(
-                                                      hours: int.parse(
-                                                          hourDurationController
-                                                              .text),
-                                                      // minutes: int.parse(minuteDurationController.text)
-                                                    )
-                                                  : Duration.zero);
-                                          // context.read<UserSessionBloc>().add(
-                                          //     UpdateDailyRecord(todayRecord));
-
-                                          context
-                                              .read<RecordFormCubit>()
-                                              .changeRecordByDate(
-                                                  selectedDate); // todo: support every date
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                            content: Text("บันทึกสำเร็จ",
-                                                style:
-                                                    GoogleFonts.ibmPlexSansThai(
-                                                  fontWeight: FontWeight.w400,
-                                                  // fontSize: 18
-                                                )),
-                                          ));
-                                          context
-                                              .read<RecordFormCubit>()
-                                              .changeRecordByDate(selectedDate);
-                                        } else {
-                                          setState(() {
-                                            selectedDay =
-                                                backupSelectedDayOffset;
-                                          });
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                            content: Text(
-                                                "บันทึกไม่สำเร็จ เนื่องจากข้อมูลไม่ครบถ้วน",
-                                                style:
-                                                    GoogleFonts.ibmPlexSansThai(
-                                                  fontWeight: FontWeight.w400,
-                                                  // fontSize: 18
-                                                )),
-                                          ));
-                                        }
-                                        Navigator.of(context).pop();
-                                      },
                                       onDelete: () {
                                         context
                                             .read<RecordFormCubit>()
@@ -694,7 +637,6 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
 
   Future<void> confirmChangingDateDialog(
       {required DateTime currentDate,
-      required VoidCallback onConfirmSave,
       required VoidCallback onDelete,
       required VoidCallback onCancel}) async {
     return showDialog<void>(
@@ -708,14 +650,10 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                 fontSize: 16, fontWeight: FontWeight.bold),
           ),
           content: Text(
-              'คุณต้องการจะบันทึกข้อมูลของวันที่ ${formatDateInThai(currentDate)} หรือไม่ (การเปลี่ยนวันที่ข้อมูลที่กรอกเพิ่มจะถูกลบหากไม่บันทึก)'),
+              'คุณต้องการจะเปลี่ยนวันที่เป็น ${formatDateInThai(currentDate)} หรือไม่ (หากตกลงข้อมูลปัจจุบันจะถูกลบหากไม่บันทึก)'),
           actions: <Widget>[
             TextButton(
-              child: const Text('บันทึก'),
-              onPressed: onConfirmSave,
-            ),
-            TextButton(
-              child: const Text('ไม่บันทึก'),
+              child: const Text('ตกลง'),
               onPressed: onDelete,
             ),
             TextButton(
