@@ -149,22 +149,21 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
               final currentHowwasYourDay =
                   state.currentWorkingRecord?.howWasYourDay ?? "";
               dailynoteController.text = currentHowwasYourDay;
-              if(state.currentWorkingRecord?.sleepTime == null){
+              if (state.currentWorkingRecord?.sleepTime == null) {
                 canSleep.value = true;
-                hourDurationController.text = "";
-              }else{
-                     final currentSleepTime =
-                  state.currentWorkingRecord?.sleepTime!.inHours.toString() ??
-                      "";
-              if (currentSleepTime == "0") {
-                canSleep.value = false;
                 hourDurationController.text = "";
               } else {
-                canSleep.value = true;
-                hourDurationController.text = currentSleepTime;
+                final currentSleepTime =
+                    state.currentWorkingRecord?.sleepTime!.inHours.toString() ??
+                        "";
+                if (currentSleepTime == "0") {
+                  canSleep.value = false;
+                  hourDurationController.text = "";
+                } else {
+                  canSleep.value = true;
+                  hourDurationController.text = currentSleepTime;
+                }
               }
-              }
-         
             },
           ),
         ],
@@ -265,9 +264,7 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                       .dateOnly
                                       .add(Duration(days: currentDayOffset!));
                                   await confirmChangingDateDialog(
-                                      currentDate: DateTime.now().dateOnly.add(
-                                          Duration(
-                                              days: backupSelectedDayOffset)),
+                                      currentDate: selectedDate.dateOnly,
                                       onDelete: () {
                                         context
                                             .read<RecordFormCubit>()
