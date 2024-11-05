@@ -1,0 +1,9 @@
+{
+  "dart.flutterSdkPath": "/Users/mac/fvm/versions/3.7.7", 
+  "search.exclude": {
+      "**/.fvm": true
+    },
+    "files.watcherExclude": {
+      "**/.fvm": true
+    }
+}

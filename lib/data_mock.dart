@@ -10,7 +10,7 @@ final mockUserData = User(name: "makuji", records: [
       recordDate: dayShift(9),
       moodLevel: 7,
       howWasYourDay: "ดูเกี๊ยว",
-      sleepTime: const Duration(hours: 6, minutes: 34)),
+      sleepTime: const Duration(hours: 7, minutes: 34)),
   DailyRecord(
       recordDate: dayShift(0),
       moodLevel: 6,
@@ -20,7 +20,7 @@ final mockUserData = User(name: "makuji", records: [
       recordDate: dayShift(3),
       moodLevel: 5,
       howWasYourDay: "ดูพัสดีเมื่อไรชีจะกลับมา",
-      sleepTime: const Duration(hours: 6, minutes: 32)),
+      sleepTime: const Duration(hours: 4, minutes: 32)),
   DailyRecord(
       recordDate: dayShift(2),
       moodLevel: 4,
@@ -35,7 +35,7 @@ final mockUserData = User(name: "makuji", records: [
       recordDate: dayShift(4),
       moodLevel: 2,
       howWasYourDay: "ดูนายอาร์ม",
-      sleepTime: const Duration(hours: 6, minutes: 29)),
+      sleepTime: const Duration(hours: 8, minutes: 29)),
   DailyRecord(
       recordDate: dayShift(7),
       moodLevel: 1,
@@ -45,15 +45,15 @@ final mockUserData = User(name: "makuji", records: [
       recordDate: dayShift(6),
       moodLevel: 8,
       howWasYourDay: "ดูพี่ตัง",
-      sleepTime: const Duration(hours: 6, minutes: 34)),
+      sleepTime: const Duration(hours: 9, minutes: 34)),
   DailyRecord(
       recordDate: dayShift(8),
       moodLevel: 9,
       howWasYourDay: "ดูชาร์กแท้ง",
-      sleepTime: const Duration(hours: 6, minutes: 27)),
+      sleepTime: const Duration(hours: 7, minutes: 27)),
   DailyRecord(
       recordDate: dayShift(10),
       moodLevel: 10,
-      howWasYourDay: "ดูพรีิวิวละมุด",
+      howWasYourDay: "ดูฮารุ",
       sleepTime: const Duration(hours: 6, minutes: 27)),
 ]);

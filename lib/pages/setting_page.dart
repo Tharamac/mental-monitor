@@ -12,6 +12,8 @@ import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mental_monitor/api/notification_api.dart';
+import 'package:mental_monitor/blocs/notified_time/notified_state.dart';
+import 'package:mental_monitor/blocs/notified_time/notified_time_cubit.dart';
 import 'package:mental_monitor/blocs/user/user_bloc.dart';
 import 'package:mental_monitor/constant/constant.dart';
 import 'package:mental_monitor/constant/palette.dart';
@@ -37,11 +39,9 @@ class SettingPage extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ))),
-      body: BlocBuilder<UserSessionBloc, UserSessionState>(
+      body: BlocBuilder<NotfiedTimeCubit, NotifiedTimeState>(
         builder: (context, state) {
-          final currentNotifiedTime = state.notifiedTime ??
-              DateTime(DateTime.now().year, DateTime.now().month,
-                  DateTime.now().day, 19, 0, 0);
+          final currentNotifiedTime = state.notifiedTime;
           return Padding(
             padding: EdgeInsets.all(16),
             child: Column(
@@ -59,7 +59,7 @@ class SettingPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "แอพจะแจ้งเตือนเวลา ${DateFormat.Hm().format(currentNotifiedTime)} ของทุกวัน",
+                      "แอพจะแจ้งเตือนเวลา ${MaterialLocalizations.of(context).formatTimeOfDay(currentNotifiedTime, alwaysUse24HourFormat: true)} น. ของทุกวัน",
                       style: GoogleFonts.ibmPlexSansThai(
                           fontSize: 15, fontWeight: FontWeight.normal),
                     ),
@@ -67,8 +67,7 @@ class SettingPage extends StatelessWidget {
                       onPressed: () async {
                         final TimeOfDay? newTime = await showTimePicker(
                           context: context,
-                          initialTime:
-                              TimeOfDay.fromDateTime(currentNotifiedTime),
+                          initialTime: currentNotifiedTime,
                           initialEntryMode: TimePickerEntryMode.input,
                           confirmText: "ตกลง",
                           cancelText: "ยกเลิก",
@@ -78,15 +77,8 @@ class SettingPage extends StatelessWidget {
                         );
                         if (newTime != null) {
                           context
-                              .read<UserSessionBloc>()
-                              .add(UpdateNotifiedTime(newTime));
-                          LocalNoticeService().cancelNotification(0);
-                          LocalNoticeService().showDailyNotificationAtTime(
-                              0,
-                              "วันนี้เป็นอย่างไรบ้าง",
-                              "บันทึกเรื่องราววันนี้ได้เลย",
-                              "notify memo",
-                              newTime);
+                              .read<NotfiedTimeCubit>()
+                              .updateNotifiedTimeSetting(newTime);
                         }
                       },
                       child: Text("เปลี่ยนเวลา",
@@ -144,7 +136,7 @@ class SettingPage extends StatelessWidget {
                               DateFormat.Hm().format(recordPos.recordDate),
                               recordPos.moodLevel,
                               recordPos.howWasYourDay,
-                              prettyDuration(recordPos.sleepTime,
+                              prettyDuration(recordPos.sleepTime ?? Duration.zero,
                                   locale:
                                       DurationLocale.fromLanguageCode('th')!)
                             ]);

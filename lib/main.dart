@@ -4,21 +4,20 @@ import 'package:flutter/services.dart';
 import 'package:dartz/dartz.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:mental_monitor/api/notification_api.dart';
 import 'package:mental_monitor/blocs/app_bloc_observer.dart';
+import 'package:mental_monitor/blocs/notified_time/notified_time_cubit.dart';
+import 'package:mental_monitor/blocs/record_form/record_form_cubit.dart';
 import 'package:mental_monitor/blocs/user/user_bloc.dart';
 import 'package:mental_monitor/constant/constant.dart';
 import 'package:mental_monitor/data_mock.dart';
 import 'package:mental_monitor/file_manager.dart';
-import 'package:mental_monitor/model/daily_record.dart';
-import 'package:mental_monitor/model/user.dart';
 import 'package:mental_monitor/pages/welcome_page.dart';
-import 'package:timezone/timezone.dart' as tz;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest.dart' as tzData;
 import 'pages/home_page.dart';
 
@@ -41,16 +40,8 @@ void main() async {
   currentUserData = await FileManager(fileName: currentUserFile)
       .readData()
       .then((value) => jsonDecode(value), onError: (e) => null);
-
+  await Permission.notification.request();
   await LocalNoticeService().setup();
-  // DateTime.parse(currentUserData["notified_time"])
-  // todo: load actual setting on home_page
-  LocalNoticeService().showDailyNotificationAtTime(
-      0,
-      "วันนี้เป็นอย่างไรบ้าง",
-      "บันทึกเรื่องราววันนี้ได้เลย",
-      "notify memo",
-      TimeOfDay(hour: 19, minute: 00));
 
   Bloc.observer = AppBlocObserver();
   runApp(MyApp(
@@ -118,6 +109,12 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(providers: [
       BlocProvider<UserSessionBloc>(
         create: (BuildContext context) => UserSessionBloc(),
+      ),
+      BlocProvider<NotfiedTimeCubit>(
+        create: (BuildContext context) => NotfiedTimeCubit(),
+      ),
+      BlocProvider<RecordFormCubit>(
+        create: (BuildContext context) => RecordFormCubit(),
       ),
     ], child: child);
   }
