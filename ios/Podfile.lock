@@ -18,7 +18,7 @@ DEPENDENCIES:
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
-  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/ios`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
 
 EXTERNAL SOURCES:
   Flutter:
@@ -32,16 +32,16 @@ EXTERNAL SOURCES:
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   shared_preferences_foundation:
-    :path: ".symlinks/plugins/shared_preferences_foundation/ios"
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
 
 SPEC CHECKSUMS:
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  flutter_email_sender: 02d7443217d8c41483223627972bfdc09f74276b
-  flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
-  path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
-  permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
-  shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_email_sender: cd533cdc7ea5eda6fabb2c7f78521c71207778a4
+  flutter_local_notifications: ef18f0537538fcd18e9106b3ddc91cc10b4e579a
+  path_provider_ios: 025d0bdaa9f9ab016700ac1e07ff63415cf638e9
+  permission_handler_apple: 3787117e48f80715ff04a3830ca039283d6a4f29
+  shared_preferences_foundation: 4e65c567e7877037d328829a522222c938bf308c
 
-PODFILE CHECKSUM: 459019fce9e79b1bbaaa26c7fff514f2efc8d01e
+PODFILE CHECKSUM: 7be2f5f74864d463a8ad433546ed1de7e0f29aef
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.16.2
