@@ -27,6 +27,11 @@ class ArchiveRecord extends UserSessionEvent {
   // const UpdateDailyRecord(this.dailyRecord);
 }
 
+class ReDailyRecord extends UserSessionEvent {
+  //   // final DailyRecord dailyRecord;
+  // const UpdateDailyRecord(this.dailyRecord);
+}
+
 class UpdateNotifiedTime extends UserSessionEvent {
   //   // final DailyRecord dailyRecord;
   final TimeOfDay notifiedTime;

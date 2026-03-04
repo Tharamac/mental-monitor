@@ -27,7 +27,7 @@ class MainMenuDrawerWidget extends StatelessWidget {
               alignment: Alignment.bottomRight,
               child: BlocBuilder<UserSessionBloc, UserSessionState>(
                 builder: (context, state) {
-                  print(state);
+                  
                   return Text(
                     'ยินดีต้อนรับ\nคุณ${state.name}',
                     style: GoogleFonts.ibmPlexSansThai(
