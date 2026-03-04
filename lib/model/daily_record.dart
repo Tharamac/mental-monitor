@@ -1,6 +1,7 @@
 import 'package:duration/duration.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:mental_monitor/model/core/datetime_expansion.dart';
 
 class DailyRecord extends Equatable {
   final DateTime recordDate;
@@ -24,6 +25,12 @@ class DailyRecord extends Equatable {
   //       moodLevel = json["mood_level"],
   //       howWasYourDay = json["how_was_your_day"],
   //       sleepTime = Duration(minutes: json["sleep_time"]);
+  bool isUpdate(DailyRecord recent) {
+    return recordDate.dateOnly.compareTo(recent.recordDate.dateOnly) == 0 &&
+        howWasYourDay == recent.howWasYourDay &&
+        moodLevel == recent.moodLevel &&
+        sleepTime == recent.sleepTime;
+  }
 
   factory DailyRecord.emptyRecord(DateTime date) {
     return DailyRecord(

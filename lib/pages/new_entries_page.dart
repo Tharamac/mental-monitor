@@ -149,13 +149,14 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                           recordDate: DateTime.now(),
                           moodLevel: currentSliderValue.toInt(),
                           howWasYourDay: dailynoteController.text,
-                          sleepTime: Duration(
-                            hours: int.parse(hourDurationController.text),
-                            // minutes: int.parse(minuteDurationController.text)
-                          ));
-                      context
-                          .read<UserSessionBloc>()
-                          .add(UpdateDailyRecord(todayRecord));
+                          sleepTime: canSleep
+                              ? Duration(
+                                  hours: int.parse(hourDurationController.text),
+                                  // minutes: int.parse(minuteDurationController.text)
+                                )
+                              : Duration.zero);
+                      context.read<UserSessionBloc>().add(UpdateDailyRecord(
+                          todayRecord)); // todo: support every date
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text("บันทึกสำเร็จ",
                             style: GoogleFonts.ibmPlexSansThai(
@@ -245,18 +246,71 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                               // dropdownMenuEntries: colorEntries,x
                               onChanged: (int? currentDayOffset) {
                                 final backupSelectedDayOffset = selectedDay;
+                                final todayRecord = DailyRecord(
+                                    recordDate: DateTime.now(),
+                                    moodLevel: currentSliderValue.toInt(),
+                                    howWasYourDay: dailynoteController.text,
+                                    sleepTime: canSleep
+                                        ? Duration(
+                                            hours: int.parse(
+                                                hourDurationController.text),
+                                            // minutes: int.parse(minuteDurationController.text)
+                                          )
+                                        : Duration.zero);
                                 setState(() {
                                   selectedDay = currentDayOffset!;
                                 });
                                 final selectedDate = DateTime.now()
                                     .dateOnly
                                     .add(Duration(days: currentDayOffset!));
+                                bool isChanged = state.currentWorkingRecord
+                                        ?.isUpdate(todayRecord) ??
+                                    false;
                                 confirmChangingDateDialog(
                                     currentDate: DateTime.now().dateOnly.add(
                                         Duration(
                                             days: backupSelectedDayOffset)),
                                     onConfirmSave: () {
                                       // save into map
+                                      if (_formKey.currentState!.validate()) {
+                                        final todayRecord = DailyRecord(
+                                            recordDate: DateTime.now(),
+                                            moodLevel:
+                                                currentSliderValue.toInt(),
+                                            howWasYourDay:
+                                                dailynoteController.text,
+                                            sleepTime: canSleep
+                                                ? Duration(
+                                                    hours: int.parse(
+                                                        hourDurationController
+                                                            .text),
+                                                    // minutes: int.parse(minuteDurationController.text)
+                                                  )
+                                                : Duration.zero);
+                                        context.read<UserSessionBloc>().add(
+                                            UpdateDailyRecord(
+                                                todayRecord)); // todo: support every date
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          content: Text("บันทึกสำเร็จ",
+                                              style:
+                                                  GoogleFonts.ibmPlexSansThai(
+                                                fontWeight: FontWeight.w400,
+                                                // fontSize: 18
+                                              )),
+                                        ));
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          content: Text(
+                                              "บันทึกไม่สำเร็จ เนื่องจากข้อมูลไม่ครบถ้วน",
+                                              style:
+                                                  GoogleFonts.ibmPlexSansThai(
+                                                fontWeight: FontWeight.w400,
+                                                // fontSize: 18
+                                              )),
+                                        ));
+                                      }
                                       Navigator.of(context).pop();
                                     },
                                     onDelete: () {
@@ -598,7 +652,7 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
         return AlertDialog(
           title: const Text('แจ้งเตือนการเปลี่ยนวันที่'),
           content: Text(
-              'คุณต้องการจะบันทึกข้อมูลของวันที่ ${formatDateInThai(currentDate)} หรือไม่ (หากกรอกข้อมูลไม่ครบถ้วนจะไม่สามาถบันทึกได้)'),
+              'คุณต้องการจะบันทึกข้อมูลของวันที่ ${formatDateInThai(currentDate)} หรือไม่ (การเปลี่ยนวันที่ข้อมูลที่กรอกเพิ่มจะถูกลบหากไม่บันทึก)'),
           actions: <Widget>[
             TextButton(
               child: const Text('บันทึก'),
