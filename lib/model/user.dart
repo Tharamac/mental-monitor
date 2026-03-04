@@ -18,8 +18,8 @@ class User {
       : name = json["name"],
         records = json["records"];
 
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'records': records,
-      };
+  Map<String, dynamic> toJson() {
+    records.sort((a, b) => b.recordDate.compareTo(a.recordDate));
+    return {'name': name, 'records': records};
+  }
 }
