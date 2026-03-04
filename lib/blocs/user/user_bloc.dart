@@ -37,5 +37,22 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
           records: existingUser.records,
           isTodayRecorded: today.compareTo(latestRecordedDate) == 0));
     });
+
+    on<UpdateDailyRecord>(((event, emit) {
+      final newList = [event.dailyRecord, ...state.records];
+      final savedUser = User(name: state.name, records: newList);
+      final FileManager updateRecordsFile =
+          FileManager(fileName: currentUserFile);
+      // updateRecordsFile.writedata(savedUser.toJson.toString);
+
+      emit(state.copyWith(todayRecord: event.dailyRecord));
+    }));
+    on<ArchiveRecord>((event, emit) {
+      final newList = [state.todayRecord!, ...state.records];
+      emit(state.copyWith(
+        todayRecord: null,
+        records: newList,
+      ));
+    });
   }
 }

@@ -11,32 +11,23 @@ import 'package:mental_monitor/pages/new_entries_page.dart';
 import 'package:mental_monitor/util.dart';
 
 class EntryRecordCard extends StatelessWidget {
-  final bool isToday;
-  final bool isRecordedToday;
   final DailyRecord record;
   final bool useDefaultColor;
 
   const EntryRecordCard(
-      {Key? key,
-      this.isToday = false,
-      this.isRecordedToday = false,
-      this.useDefaultColor = false,
-      required this.record})
+      {Key? key, this.useDefaultColor = false, required this.record})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final widgetColor = (isToday && !isRecordedToday)
-        ? Colors.blueGrey[400]
-        : useDefaultColor
-            ? Colors.lightBlue[500]
-            : emotionSliderPalette2[record.moodLevel - 1];
-    print(widgetColor?.withOpacity(0.5));
+    final widgetColor = useDefaultColor
+        ? Colors.lightBlue[500]
+        : emotionSliderPalette2[record.moodLevel - 1];
 
     return Card(
       color: widgetColor,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: const EdgeInsets.only(left: 12, top: 12, right: 12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -45,48 +36,66 @@ class EntryRecordCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                RichText(
-                  textHeightBehavior: const TextHeightBehavior(),
-                  text: TextSpan(
-                    style: GoogleFonts.ibmPlexSansThai(
-                      fontWeight: FontWeight.w600,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'วันที่ ${formatDateInThai(record.recordDate)}',
+                      style: GoogleFonts.ibmPlexSansThai(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        height: 1.4,
+                      ),
                     ),
-                    children: [
-                      TextSpan(
-                          text:
-                              'วันที่ ${formatDateInThai(record.recordDate)}\n'),
-                      TextSpan(
-                          text:
-                              'บันทึกเมื่อ ${DateFormat.Hm().format(record.recordDate)}\n'),
-                      const WidgetSpan(
-                          child: const Icon(
-                        Icons.hotel,
-                        size: 14,
-                      )),
-                      TextSpan(
-                          text:
-                              ' ${prettyDuration(record.sleepTime, locale: DurationLocale.fromLanguageCode('th')!)}'),
-                    ],
-                  ),
+                    Text(
+                      'บันทึกเมื่อ ${DateFormat.Hm().format(record.recordDate)}',
+                      style: GoogleFonts.ibmPlexSansThai(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        height: 1.4,
+                      ),
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.nights_stay_rounded,
+                          size: 16,
+                          color: Colors.black,
+                        ),
+                        Text(
+                          ' ${prettyDuration(record.sleepTime, locale: DurationLocale.fromLanguageCode('th')!)}',
+                          style: GoogleFonts.ibmPlexSansThai(
+                              fontWeight: FontWeight.w600,
+                              // height: 1.2,
+                              // decoration: TextDecoration(),
+                              color: Colors.black),
+                        )
+                      ],
+                    ),
+                  ],
                 ),
                 Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  // mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
                       "ระดับอารมณ์",
                       style: GoogleFonts.ibmPlexSansThai(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        height: 1.2,
                       ),
                     ),
+                    // SizedBox(height: 1),
                     Text(
                       record.moodLevel.toString(),
                       style: GoogleFonts.ibmPlexSansThai(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 30,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w900,
+                        height: 1.2,
                       ),
                     ),
                   ],
@@ -94,58 +103,33 @@ class EntryRecordCard extends StatelessWidget {
               ],
             ),
             const SizedBox(
-              height: 16,
+              height: 4,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Transform.rotate(
+                    angle: pi, child: const Icon(Icons.format_quote))
+              ],
             ),
             Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                    color: HSLColor.fromColor(widgetColor!)
-                        .withLightness(0.7)
-                        .toColor(),
-                    // color: widgetColor?.withAlpha(128),
-                    borderRadius: BorderRadius.circular(6)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Transform.rotate(
-                        angle: pi, child: const Icon(Icons.format_quote)),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Text(
-                        record.howWasYourDay,
-                      ),
-                    ),
-                    const Icon(Icons.format_quote)
-                  ],
-                )),
-            if (isToday && !isRecordedToday)
-              TextButton.icon(
-                style: ElevatedButton.styleFrom(primary: Colors.blueGrey[200]),
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (builder) => const NewMentalEntryPage()));
-                },
-                icon: const Icon(Icons.add, color: Colors.black),
-                label: Text(
-                  "เพิ่มบันทึกของวันนี้",
-                  style: GoogleFonts.ibmPlexSansThai(
-                      fontWeight: FontWeight.w600, color: Colors.black),
-                ),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                  color: HSLColor.fromColor(widgetColor!)
+                      .withLightness(0.7)
+                      .toColor(),
+                  // color: widgetColor?.withAlpha(128),
+                  borderRadius: BorderRadius.circular(6)),
+              child: Text(
+                record.howWasYourDay,
               ),
-            if (isToday && isRecordedToday)
-              TextButton.icon(
-                style: ElevatedButton.styleFrom(primary: Colors.blueGrey[200]),
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (builder) => const NewMentalEntryPage()));
-                },
-                icon: const Icon(Icons.edit, color: Colors.black),
-                label: Text(
-                  "แก้ไขบันทึกของวันนี้",
-                  style: GoogleFonts.ibmPlexSansThai(
-                      fontWeight: FontWeight.w600, color: Colors.black),
-                ),
-              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                const Icon(Icons.format_quote),
+              ],
+            ),
           ],
         ),
       ),

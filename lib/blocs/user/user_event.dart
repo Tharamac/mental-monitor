@@ -16,5 +16,17 @@ class ImportExistingUserEvent extends UserSessionEvent {
   final Map<String, dynamic> currentUserData;
   const ImportExistingUserEvent(this.currentUserData);
 }
+
+class UpdateDailyRecord extends UserSessionEvent {
+  final DailyRecord dailyRecord;
+  const UpdateDailyRecord(this.dailyRecord);
+}
+
+class ArchiveRecord extends UserSessionEvent{
+  //   // final DailyRecord dailyRecord;
+  // const UpdateDailyRecord(this.dailyRecord);
+}
+
+
 // class RegisterUser extends UserEvent {}
 
