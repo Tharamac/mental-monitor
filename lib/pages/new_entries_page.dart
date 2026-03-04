@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mental_monitor/constant/palette.dart';
 import 'dart:math';
 import 'package:intl/intl.dart';
+import 'package:mental_monitor/model/daily_record.dart';
+import 'package:mental_monitor/model/user.dart';
+import 'package:mental_monitor/util.dart';
 
 class NewMentalEntryPage extends StatefulWidget {
   const NewMentalEntryPage({Key? key}) : super(key: key);
@@ -14,8 +18,10 @@ class NewMentalEntryPage extends StatefulWidget {
 
 class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
   double _currentSliderValue = 5;
-  DateTime today = DateTime(
-      DateTime.now().year + 543, DateTime.now().month, DateTime.now().day);
+  final _formKey = GlobalKey<FormState>();
+  // DateTime today = DateTime(
+  //     DateTime.now().year + 543, DateTime.now().month, DateTime.now().day);
+  TextEditingController dailynoteController = TextEditingController();
   TextEditingController hourDurationController = TextEditingController();
   TextEditingController minuteDurationController = TextEditingController();
 
@@ -38,7 +44,29 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
               )),
           actions: [
             TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    final todayRecord = DailyRecord(
+                        recordDate: DateTime.now(),
+                        moodLevel: _currentSliderValue.toInt(),
+                        howWasYourDay: dailynoteController.text,
+                        sleepTime: Duration(
+                            hours: int.parse(hourDurationController.text),
+                            minutes: int.parse(minuteDurationController.text)));
+                    final mockuser = User(name: "makuji", records: [
+                      todayRecord,
+                      todayRecord,
+                      todayRecord,
+                      todayRecord
+                    ]);
+                    // pass
+                    // print(todayRecord.toJson());
+                    // print(DailyRecord.fromJson(todayRecord.toJson()));
+                    // pass
+                    print(mockuser.toJson());
+                    print(User.fromJson(mockuser.toJson()));
+                  }
+                },
                 child: Text("บันทึก",
                     style: GoogleFonts.ibmPlexSansThai(
                       fontWeight: FontWeight.normal,
@@ -51,15 +79,14 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
               padding: const EdgeInsets.all(16.0),
               child: SingleChildScrollView(
                 child: Form(
+                  key: _formKey,
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TextFormField(
                           readOnly: true,
                           controller: TextEditingController(
-                              text: DateFormat.yMMMMd()
-                                  .format(today)
-                                  .replaceAll('ค.ศ.', 'พ.ศ.')),
+                              text: formatDateInThai(DateTime.now())),
                           maxLines: 1,
                           decoration: const InputDecoration(
                             // contentPadding: EdgeInsets.all(8),
@@ -141,12 +168,8 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                             valueIndicatorTextStyle:
                                 GoogleFonts.ibmPlexSansThai(
                               fontWeight: FontWeight.bold,
-
-                              // color: emotionSliderPalette2[
-                              //     _currentSliderValue.toInt() - 1]
                             ),
                             trackHeight: 5,
-                            // minThumbSeparation: 10,
                           ),
                           child: Slider(
                             value: _currentSliderValue,
@@ -174,6 +197,14 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                             angle: pi, child: const Icon(Icons.format_quote)),
                         TextFormField(
                           // scrollPadding: EdgeInsets.all(45),
+                          controller: dailynoteController,
+                          validator: (input) {
+                            if ((input ?? "").isNotEmpty) {
+                              return null;
+                            } else {
+                              return "ถ้าไม่มีให้ใส่ -";
+                            }
+                          },
                           decoration: const InputDecoration(
                             contentPadding: const EdgeInsets.all(12),
                             label: Text("วันนี้รู้สึกอย่างไรบ้าง :"),
@@ -223,15 +254,29 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                 // textAlign: TextAlign.center,
                                 // enabled: false,
                                 maxLength: 2,
+                                validator: (input) {
+                                  if ((input ?? "").isEmpty) {
+                                    return "กรุณาใส่จำนวนชั่วโมง";
+                                  }
+                                },
 
-                                textAlign: TextAlign.center,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
+                                textAlign: TextAlign.left,
                                 keyboardType: TextInputType.number,
                                 controller: hourDurationController,
                                 decoration: const InputDecoration(
                                   // contentPadding: EdgeInsets.all(12),
-                                  contentPadding: const EdgeInsets.all(0),
+                                  errorMaxLines: 2,
+                                  contentPadding:
+                                      const EdgeInsets.only(left: 12),
                                   label: const Text("ชั่วโมง"),
                                   counterText: "",
+
+                                  errorStyle: TextStyle(
+                                    height: 1,
+                                  ),
 
                                   // alignLabelWithHint: true,
                                   enabledBorder: UnderlineInputBorder(
@@ -258,13 +303,32 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                 // textAlign: TextAlign.center,
                                 // enabled: false,
                                 maxLength: 2,
+                                validator: (input) {
+                                  if ((input ?? "").isEmpty) {
+                                    return "กรุณาใส่จำนวนนาที";
+                                  }
+                                  int minute = int.parse(input ?? "");
+                                  if (!minute.isNegative && minute < 60) {
+                                    return null;
+                                  } else {
+                                    return "ตัวเลขนาทีจะต้องอยู่ระหว่าง 0 - 59";
+                                  }
+                                },
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
 
-                                textAlign: TextAlign.center,
+                                textAlign: TextAlign.left,
                                 keyboardType: TextInputType.number,
                                 controller: minuteDurationController,
                                 decoration: const InputDecoration(
+                                  errorMaxLines: 2,
+                                  errorStyle: TextStyle(
+                                    height: 1,
+                                  ),
                                   counterText: "",
-                                  contentPadding: EdgeInsets.all(0),
+                                  contentPadding:
+                                      const EdgeInsets.only(left: 12),
                                   label: Text("นาที"),
                                   // alignLabelWithHint: true,
                                   enabledBorder: UnderlineInputBorder(

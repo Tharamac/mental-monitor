@@ -11,15 +11,15 @@ class User {
     List<DailyRecord>? records,
   }) : records = records ?? [];
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    List<dynamic> list = jsonDecode(json["name"]);
-    final finalList = list.map((data) => DailyRecord.fromJson(data)).toList();
-    print(finalList);
-    return User(name: json["name"], records: finalList);
-  }
+  @override
+  String toString() => 'name: $name, records: $records';
+
+  User.fromJson(Map<String, dynamic> json)
+      : name = json["name"],
+        records = json["records"];
 
   Map<String, dynamic> toJson() => {
         'name': name,
-        'record': records,
+        'records': records,
       };
 }

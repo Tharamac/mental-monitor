@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mental_monitor/blocs/user/user_bloc.dart';
 import 'package:mental_monitor/pages/setting_page.dart';
 
 class MainMenuDrawerWidget extends StatelessWidget {
@@ -23,10 +25,16 @@ class MainMenuDrawerWidget extends StatelessWidget {
             child: FittedBox(
               fit: BoxFit.fitWidth,
               alignment: Alignment.bottomRight,
-              child: Text(
-                'ทยายสาญุก\nสานพำยบาสั้น',
-                style: GoogleFonts.ibmPlexSansThai(fontWeight: FontWeight.w700, height: 1.5),
-                textAlign: TextAlign.right,
+              child: BlocBuilder<UserSessionBloc, UserSessionState>(
+                builder: (context, state) {
+                  print(state);
+                  return Text(
+                    'ยินดีต้อนรับ\nคุณ${state.name}',
+                    style: GoogleFonts.ibmPlexSansThai(
+                        fontWeight: FontWeight.w700, height: 1.5),
+                    textAlign: TextAlign.right,
+                  );
+                },
               ),
             ),
           ),
@@ -74,13 +82,19 @@ class MainMenuDrawerWidget extends StatelessWidget {
               //     )),
               TextButton.icon(
                   onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: ((context) => SettingPage())));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: ((context) => SettingPage())));
                   },
-                  style: TextButton.styleFrom(alignment: Alignment.centerLeft, minimumSize: Size(200, 60), backgroundColor: Colors.blue[50], padding: EdgeInsets.symmetric(horizontal: 20)),
+                  style: TextButton.styleFrom(
+                      alignment: Alignment.centerLeft,
+                      minimumSize: Size(200, 60),
+                      backgroundColor: Colors.blue[50],
+                      padding: EdgeInsets.symmetric(horizontal: 20)),
                   icon: Icon(Icons.settings),
                   label: Text(
                     "การตั้งค่า",
-                    style: GoogleFonts.ibmPlexSansThai(fontSize: 24, fontWeight: FontWeight.w600),
+                    style: GoogleFonts.ibmPlexSansThai(
+                        fontSize: 24, fontWeight: FontWeight.w600),
                   )),
             ],
           ),

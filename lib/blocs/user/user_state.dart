@@ -1,15 +1,17 @@
 part of 'user_bloc.dart';
 
 @immutable
-class UserState {
+class UserSessionState {
   final String name;
   final List<DailyRecord> records;
+  final bool isTodayRecorded;
 
-  UserState({required this.name, List<DailyRecord>? records})
+  UserSessionState({required this.name, List<DailyRecord>? records, this.isTodayRecorded = false})
       : records = records ?? [];
 
-  UserState copyWith({String? name, List<DailyRecord>? records}) {
-    return UserState(name: name ?? this.name, records: records ?? this.records);
+  UserSessionState copyWith({String? name, List<DailyRecord>? records}) {
+    return UserSessionState(
+        name: name ?? this.name, records: records ?? this.records);
   }
 
   @override
@@ -21,6 +23,6 @@ class UserState {
   List<Object> get props => [name];
 }
 
-class UserInitial extends UserState {
+class UserInitial extends UserSessionState {
   UserInitial() : super(name: "", records: []);
 }
