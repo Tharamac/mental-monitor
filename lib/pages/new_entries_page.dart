@@ -30,10 +30,12 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
   TextEditingController minuteDurationController = TextEditingController();
   int selectedDay = 0;
   bool canSleep = true;
+  late final RecordFormState workingState;
 
   @override
   void initState() {
     final snapshot = context.read<UserSessionBloc>().state;
+    workingState = context.read<RecordFormCubit>().state;
     // _currentSliderValue = snapshot.todayRecord?.moodLevel.toDouble() ?? 5.0;
     dailynoteController.text = snapshot.todayRecord?.howWasYourDay ?? "";
     hourDurationController.text =
@@ -120,23 +122,39 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
     //             ))
     //       ]),
     // );
-    return BlocListener<UserSessionBloc, UserSessionState>(
-      listenWhen: (previous, current) => !const DeepCollectionEquality()
-          .equals(previous.records, current.records),
-      listener: (context, state) {
-        context.read<RecordFormCubit>().loadLatestRecords(state.records);
-      },
-      child: BlocBuilder<RecordFormCubit, RecordFormState>(
-          builder: (context, state) {
-        final currentSleepTime =
-            state.currentWorkingRecord?.sleepTime.inHours.toString() ?? "";
-        final currentHowwasYourDay =
-            state.currentWorkingRecord?.howWasYourDay ?? "";
-        final currentSliderValue =
-            (state.currentWorkingRecord?.moodLevel ?? 5).toDouble();
-        hourDurationController.text = currentSleepTime;
-        dailynoteController.text = currentHowwasYourDay;
-        return Scaffold(
+    return MultiBlocListener(
+        listeners: [
+          BlocListener<UserSessionBloc, UserSessionState>(
+            listenWhen: (previous, current) => !const DeepCollectionEquality()
+                .equals(previous.records, current.records),
+            listener: (context, state) {
+              context.read<RecordFormCubit>().loadLatestRecords(state.records);
+            },
+          ),
+          BlocListener<RecordFormCubit, RecordFormState>(
+            // listenWhen: (previous, current) => !previous
+            //     .currentWorkingRecord!.recordDate.dateOnly
+            //     .isAtSameMomentAs(
+            //         current.currentWorkingRecord!.recordDate.dateOnly),
+            listener: (context, state) {
+              //
+              final currentHowwasYourDay =
+                  state.currentWorkingRecord?.howWasYourDay ?? "";
+              dailynoteController.text = currentHowwasYourDay;
+              final currentSleepTime =
+                  state.currentWorkingRecord?.sleepTime.inHours.toString() ??
+                      "";
+              if (currentSleepTime == "0") {
+                canSleep = false;
+                hourDurationController.text = "";
+              } else {
+                canSleep = true;
+                hourDurationController.text = currentSleepTime;
+              }
+            },
+          ),
+        ],
+        child: Scaffold(
             // resizeToAvoidBottomInset: false,
             appBar: AppBar(
               centerTitle: true,
@@ -151,7 +169,9 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                       if (_formKey.currentState!.validate()) {
                         final todayRecord = DailyRecord(
                             recordDate: DateTime.now(),
-                            moodLevel: currentSliderValue.toInt(),
+                            moodLevel: workingState
+                                .currentWorkingRecord!.moodLevel
+                                .toInt(),
                             howWasYourDay: dailynoteController.text,
                             sleepTime: canSleep
                                 ? Duration(
@@ -188,41 +208,10 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Container(
-                          //   width: MediaQuery.of(context).size.width,
-                          //   child: CupertinoSegmentedControl<int>(
-                          //     groupValue: selectedDay,
-                          //     // selectedColor: Colors.white,
-                          //     children: {
-                          //       for (var i = 3; i > 0; i--) ...{
-                          //         -i: segmentControlChildren("$i วันที่แล้ว", i)
-                          //       },
-                          //       ...{0: segmentControlChildren("วันนี้", 0)},
-                          //     },
-                          //     // {
-                          //     //   // -3:
-                          //     //   -3: segmentControlChildren("3 วันที่แล้ว", 3),
-                          //     //   -2: segmentControlChildren("2 วันที่แล้ว", 2),
-
-                          //     //   -1: segmentControlChildren("1 วันที่แล้ว", 1),
-                          //     //   0: Text("วันนี้"),
-                          //     // },
-                          //     onValueChanged: (int value) {
-                          //       setState(() {
-                          //         selectedDay = value;
-                          //       });
-                          //     },
-                          //     padding: EdgeInsets.zero,
-                          //   ),
-                          // ),
                           SizedBox(
                               width: MediaQuery.of(context).size.width,
                               child: DropdownButtonFormField<int>(
                                 value: selectedDay,
-                                // menuMaxHeight: 35,
-                                // initialSelection: selectedSegment,
-                                // controller: colorController,
-                                // label: const Text('Color'),
                                 decoration: InputDecoration(
                                   // contentPadding: EdgeInsets.all(8),
                                   label: Text("วันที่",
@@ -244,7 +233,7 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                 ),
                                 items: [
                                   for (var i = 3; i > 0; i--) ...[
-                                    dropDownChildren("$i วันที่แล้ว", i)
+                                    dropDownChildren(" วันที่แล้ว", i)
                                   ],
                                   ...[dropDownChildren("วันนี้", 0)],
                                 ],
@@ -253,7 +242,9 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                   final backupSelectedDayOffset = selectedDay;
                                   final todayRecord = DailyRecord(
                                       recordDate: DateTime.now(),
-                                      moodLevel: currentSliderValue.toInt(),
+                                      moodLevel: workingState
+                                          .currentWorkingRecord!.moodLevel
+                                          .toInt(),
                                       howWasYourDay: dailynoteController.text,
                                       sleepTime: canSleep
                                           ? Duration(
@@ -268,7 +259,8 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                   final selectedDate = DateTime.now()
                                       .dateOnly
                                       .add(Duration(days: currentDayOffset!));
-                                  bool isChanged = state.currentWorkingRecord
+                                  bool isChanged = workingState
+                                          .currentWorkingRecord
                                           ?.isUpdate(todayRecord) ??
                                       false;
                                   if (isChanged) {
@@ -283,8 +275,10 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                               .validate()) {
                                             final todayRecord = DailyRecord(
                                                 recordDate: DateTime.now(),
-                                                moodLevel:
-                                                    currentSliderValue.toInt(),
+                                                moodLevel: workingState
+                                                    .currentWorkingRecord!
+                                                    .moodLevel
+                                                    .toInt(),
                                                 howWasYourDay:
                                                     dailynoteController.text,
                                                 sleepTime: canSleep
@@ -336,6 +330,13 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                             selectedDay =
                                                 backupSelectedDayOffset;
                                           });
+                                          context
+                                              .read<RecordFormCubit>()
+                                              .changeRecordByDate(DateTime.now()
+                                                  .dateOnly
+                                                  .add(Duration(
+                                                      days:
+                                                          backupSelectedDayOffset)));
                                           Navigator.of(context).pop();
                                         });
                                   }
@@ -427,59 +428,77 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                     ],
                                   )),
                               Expanded(
-                                flex: 1,
-                                child: Container(
-                                    // color: Colors.amber,
-                                    padding: EdgeInsets.only(top: 12),
-                                    child: Text(
-                                      currentSliderValue.toInt().toString(),
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.ibmPlexSansThai(
-                                        color: moodSliderPalette1[
-                                            currentSliderValue.toInt() - 1],
-                                        fontSize: 48,
-                                        height: 1,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    )),
-                              )
+                                  flex: 1,
+                                  child: BlocSelector<
+                                      RecordFormCubit,
+                                      RecordFormState,
+                                      double>(selector: (state) {
+                                    return state.currentWorkingRecord?.moodLevel
+                                            .toDouble() ??
+                                        5.0;
+                                  }, builder: (context, currentSliderValue) {
+                                    return Container(
+                                        // color: Colors.amber,
+                                        padding: EdgeInsets.only(top: 12),
+                                        child: Text(
+                                          currentSliderValue.toInt().toString(),
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.ibmPlexSansThai(
+                                            color: moodSliderPalette1[
+                                                currentSliderValue.toInt() - 1],
+                                            fontSize: 48,
+                                            height: 1,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ));
+                                  }))
                             ],
                           ),
-                          SliderTheme(
-                            data: SliderThemeData(
-                              showValueIndicator: ShowValueIndicator.always,
-                              valueIndicatorTextStyle:
-                                  GoogleFonts.ibmPlexSansThai(
-                                fontWeight: FontWeight.bold,
-                              ),
-                              trackHeight: 5,
-                            ),
-                            child: Slider(
-                              value: currentSliderValue,
-                              max: 10,
-                              min: 1,
-                              divisions: 9,
-                              // label: _currentSliderValue.toString(),
-                              // mouseCursor: MouseCursor.defer,
-                              activeColor: moodSliderPalette1[
-                                      currentSliderValue.toInt() - 1]
-                                  ?.withAlpha(120),
-                              inactiveColor: moodSliderPalette1[
-                                      currentSliderValue.toInt() - 1]
-                                  ?.withAlpha(120),
-                              thumbColor: moodSliderPalette1[
-                                  currentSliderValue.toInt() - 1],
-                              label: currentSliderValue.round().toString(),
+                          // Bloc<RecordFormCubit, RecordFormState>(
+                          BlocSelector<RecordFormCubit, RecordFormState,
+                              double>(
+                            selector: (state) {
+                              return state.currentWorkingRecord?.moodLevel
+                                      .toDouble() ??
+                                  5.0;
+                            },
+                            builder: (context, currentSliderValue) {
+                              return SliderTheme(
+                                data: SliderThemeData(
+                                  showValueIndicator: ShowValueIndicator.always,
+                                  valueIndicatorTextStyle:
+                                      GoogleFonts.ibmPlexSansThai(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  trackHeight: 5,
+                                ),
+                                child: Slider(
+                                  value: currentSliderValue,
+                                  max: 10,
+                                  min: 1,
+                                  divisions: 9,
+                                  // label: _currentSliderValue.toString(),
+                                  // mouseCursor: MouseCursor.defer,
+                                  activeColor: moodSliderPalette1[
+                                          currentSliderValue.toInt() - 1]
+                                      ?.withAlpha(120),
+                                  inactiveColor: moodSliderPalette1[
+                                          currentSliderValue.toInt() - 1]
+                                      ?.withAlpha(120),
+                                  thumbColor: moodSliderPalette1[
+                                      currentSliderValue.toInt() - 1],
+                                  label: currentSliderValue.round().toString(),
 
-                              onChanged: (double value) {
-                                context
-                                    .read<RecordFormCubit>()
-                                    .updateData(newMoodLevel: value.toInt());
-                                // setState(() {
-                                //   _currentSliderValue = value;
-                                // });
-                              },
-                            ),
+                                  onChanged: (double value) {
+                                    context.read<RecordFormCubit>().updateData(
+                                        newMoodLevel: value.toInt());
+                                    // setState(() {
+                                    //   _currentSliderValue = value;
+                                    // });
+                                  },
+                                ),
+                              );
+                            },
                           ),
                           Transform.rotate(
                               angle: pi, child: const Icon(Icons.format_quote)),
@@ -652,9 +671,7 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                             ),
                         ]),
                   ))),
-            ));
-      }),
-    );
+            )));
   }
 
   Future<void> confirmChangingDateDialog(
