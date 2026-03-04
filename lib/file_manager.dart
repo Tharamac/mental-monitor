@@ -12,6 +12,8 @@ class FileManager {
     return directory.path;
   }
 
+ 
+
   Future<File> get localFile async {
     final path = await _localPath;
     return File('$path/$fileName.$format');
@@ -27,6 +29,13 @@ class FileManager {
   }
 
   Future<File> writedata(String data) async {
+    final file = await localFile;
+
+    // Write the file
+    return file.writeAsString(data);
+  }
+
+   Future<File> writedataExternal(String data) async {
     final file = await localFile;
 
     // Write the file

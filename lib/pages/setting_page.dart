@@ -1,4 +1,7 @@
 import 'dart:io';
+// import 'dart:io' show Platform;
+
+import 'dart:math';
 
 import 'package:duration/duration.dart';
 import 'package:duration/locale.dart';
@@ -10,14 +13,19 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mental_monitor/api/notification_api.dart';
 import 'package:mental_monitor/blocs/user/user_bloc.dart';
+import 'package:mental_monitor/constant/constant.dart';
 import 'package:mental_monitor/constant/palette.dart';
 import 'package:mental_monitor/file_manager.dart';
 import 'package:mental_monitor/model/daily_record.dart';
 import 'package:mental_monitor/util.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
+import 'package:random_string/random_string.dart';
 
 class SettingPage extends StatelessWidget {
   SettingPage({Key? key}) : super(key: key);
-  final emailController = TextEditingController();
+  // final emailController = TextEditingController();
+  final rand = Random.secure();
 
   @override
   Widget build(BuildContext context) {
@@ -42,16 +50,19 @@ class SettingPage extends StatelessWidget {
                 Text(
                   "การแจ้งเตือนการบันทึก",
                   style: GoogleFonts.ibmPlexSansThai(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                      fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(
-                  height: 12,
-                ),
+                // SizedBox(
+                //   height: 12,
+                // ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                        "แอพจะแจ้งเตือนเวลา ${DateFormat.Hm().format(currentNotifiedTime)} ของทุกวัน"),
+                      "แอพจะแจ้งเตือนเวลา ${DateFormat.Hm().format(currentNotifiedTime)} ของทุกวัน",
+                      style: GoogleFonts.ibmPlexSansThai(
+                          fontSize: 15, fontWeight: FontWeight.normal),
+                    ),
                     TextButton(
                       onPressed: () async {
                         final TimeOfDay? newTime = await showTimePicker(
@@ -70,81 +81,60 @@ class SettingPage extends StatelessWidget {
                               .read<UserSessionBloc>()
                               .add(UpdateNotifiedTime(newTime));
                           LocalNoticeService().cancelNotification(0);
-                          LocalNoticeService().showDailyNotificationAtTime(0,
-                              "วันนี้เป็นอย่างไรบ้าง", "บันทึกเรื่องราววันนี้ได้เลย", "notify memo", newTime);
+                          LocalNoticeService().showDailyNotificationAtTime(
+                              0,
+                              "วันนี้เป็นอย่างไรบ้าง",
+                              "บันทึกเรื่องราววันนี้ได้เลย",
+                              "notify memo",
+                              newTime);
                         }
                       },
-                      child: Text("เปลี่ยนเวลา"),
+                      child: Text("เปลี่ยนเวลา",
+                          style: GoogleFonts.ibmPlexSansThai(
+                              fontSize: 16, fontWeight: FontWeight.w600)),
                     )
                   ],
                 ),
                 Divider(),
                 Text(
-                  "สำรองข้อมูล",
-                  style: GoogleFonts.ibmPlexSansThai(
-                      fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                TextButton(
-                    onPressed: (() {}), child: Text("สำรองข้อมูลตอนนี้")),
-                Divider(),
-                Text(
                   "ส่งข้อมูลไปที่อีเมล์",
                   style: GoogleFonts.ibmPlexSansThai(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                      fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(
-                  height: 12,
-                ),
+                // SizedBox(
+                //   height: 12,
+                // ),
                 Row(
                   children: [
-                    Expanded(
-                      flex: 5,
-                      child: TextFormField(
-                        // readOnly: true,
-                        controller: emailController,
-                        maxLines: 1,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          // contentPadding: EdgeInsets.all(8),
-                          label: Text("อีเมล์แอดเดรส"),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                width: 2,
-                                color: Colors.blueGrey), //<-- SEE HERE
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                width: 2,
-                                color: Colors.blueGrey), //<-- SEE HERE
-                          ),
-                        ),
-                      ),
-                    ),
                     TextButton(
                         onPressed: () async {
                           final records =
                               context.read<UserSessionBloc>().state.records;
 
                           var excel = Excel.createExcel();
+
                           Sheet recordSheet = excel['records'];
+                          excel.delete('Sheet1');
 
                           CellStyle fieldCellStyle = CellStyle(
                               backgroundColorHex: "#c3c9c3",
                               fontFamily:
-                                  GoogleFonts.ibmPlexSansThai().fontFamily);
+                                  GoogleFonts.ibmPlexSansThai().fontFamily,
+                              bold: true);
                           CellStyle normalCellStyle = CellStyle(
                               fontFamily:
                                   GoogleFonts.ibmPlexSansThai().fontFamily);
                           for (int ind = 1;
                               ind <= DailyRecord.getFieldName.length;
                               ind++) {
-                            var cell = recordSheet
-                                .cell(CellIndex.indexByString('A$ind'));
+                            var cell = recordSheet.cell(CellIndex.indexByString(
+                                '${String.fromCharCode(64 + ind)}1'));
                             cell.cellStyle = fieldCellStyle;
                             cell.value = DailyRecord.getFieldName[ind - 1];
                           }
                           for (int ind = 1; ind <= records.length; ind++) {
                             var recordPos = records[ind - 1];
+
                             recordSheet.appendRow([
                               formatDateInThai(recordPos.recordDate),
                               DateFormat.Hm().format(recordPos.recordDate),
@@ -157,16 +147,16 @@ class SettingPage extends StatelessWidget {
 
                             recordSheet
                                 .cell(CellIndex.indexByColumnRow(
-                                    columnIndex: ind, rowIndex: 0))
+                                    columnIndex: 0, rowIndex: ind))
                                 .cellStyle = normalCellStyle;
                             // dateCell.value = formatDateInThai(recordPos.recordDate);
                             recordSheet
                                 .cell(CellIndex.indexByColumnRow(
-                                    columnIndex: ind, rowIndex: 1))
+                                    columnIndex: 1, rowIndex: ind))
                                 .cellStyle = normalCellStyle;
                             recordSheet
                                 .cell(CellIndex.indexByColumnRow(
-                                    columnIndex: ind, rowIndex: 2))
+                                    columnIndex: 2, rowIndex: ind))
                                 .cellStyle = CellStyle(
                               backgroundColorHex:
                                   '#${moodSliderPalette2[recordPos.moodLevel - 1]!.value.toRadixString(16).substring(2, 8)}',
@@ -175,11 +165,11 @@ class SettingPage extends StatelessWidget {
                             );
                             recordSheet
                                 .cell(CellIndex.indexByColumnRow(
-                                    columnIndex: ind, rowIndex: 3))
+                                    columnIndex: 3, rowIndex: ind))
                                 .cellStyle = normalCellStyle;
                             recordSheet
                                 .cell(CellIndex.indexByColumnRow(
-                                    columnIndex: ind, rowIndex: 4))
+                                    columnIndex: 4, rowIndex: ind))
                                 .cellStyle = normalCellStyle;
                           }
 
@@ -195,7 +185,7 @@ class SettingPage extends StatelessWidget {
                             body: '',
                             subject:
                                 'นำส่งบันทึกของคุณ${context.read<UserSessionBloc>().state.name}',
-                            recipients: [emailController.text],
+                            // recipients: [emailController.text],
                             attachmentPaths: [
                               await FileManager(fileName: "out", format: "xlsx")
                                   .localFile
@@ -203,6 +193,42 @@ class SettingPage extends StatelessWidget {
                             ],
                             isHTML: false,
                           );
+                          // String username = 'moodtracker.theapp@yahoo.com';
+                          // String password = 'f?9\$*NSCrh!P_(Z';
+
+                          // final smtpServer = yahoo(username, password);
+
+                          // // Create our message.
+                          // final message = Message()
+                          //   ..from = Address(username, 'Mood tracker')
+                          //   ..recipients.add(username)
+                          //   ..subject =
+                          //       'นำส่งบันทึกของคุณ${context.read<UserSessionBloc>().state.name}'
+                          //   ..attachments = [
+                          //     FileAttachment(await FileManager(
+                          //             fileName: "out", format: "xlsx")
+                          //         .localFile)
+                          //   ];
+                          // // //                          Logger.root.level = Level.ALL;
+                          // // // Logger.root.onRecord.listen((LogRecord rec) {
+                          // // //   print('${rec.level.name}: ${rec.time}: ${rec.message}');
+                          // // // });
+
+                          // try {
+                          //   final sendReport = await send(message, smtpServer);
+                          //   print('Message sent: ' + sendReport.toString());
+                          //   ScaffoldMessenger.of(context).showSnackBar(
+                          //     SnackBar(
+                          //       content: Text("ส่งอีเมล์สำเร็จ"),
+                          //     ),
+                          //   );
+                          // } on MailerException catch (e) {
+                          //   print('Message not sent.');
+                          //   print(e.message);
+                          //   for (var p in e.problems) {
+                          //     print('Problem: ${p.code}: ${p.msg}');
+                          //   }
+                          // }
 
                           try {
                             await FlutterEmailSender.send(email);
@@ -224,7 +250,9 @@ class SettingPage extends StatelessWidget {
                           //     const ListToCsvConverter().convert([snapshot]);
                           // print(csv);
                         },
-                        child: Text("ส่ง"))
+                        child: Text("ไปยังหน้าส่งอีเมล์",
+                            style: GoogleFonts.ibmPlexSansThai(
+                                fontSize: 16, fontWeight: FontWeight.w600)))
                   ],
                 ),
               ],

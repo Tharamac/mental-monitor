@@ -35,10 +35,6 @@ class WelcomePage extends StatelessWidget {
                       },
                       child: Text("เริ่มใช้งาน")),
                 ),
-                Divider(),
-                Center(
-                    child: TextButton(
-                        onPressed: () {}, child: Text("ดึงข้อมูลผู้ใช้เก่า")))
               ],
             )),
       ),
