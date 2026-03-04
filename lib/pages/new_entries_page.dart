@@ -29,20 +29,28 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
   TextEditingController hourDurationController = TextEditingController();
   TextEditingController minuteDurationController = TextEditingController();
   int selectedDay = 0;
-  bool canSleep = true;
+  final ValueNotifier<bool> canSleep = ValueNotifier<bool>(true);
   late final RecordFormState workingState;
 
   @override
   void initState() {
-    final snapshot = context.read<UserSessionBloc>().state;
-    workingState = context.read<RecordFormCubit>().state;
+    final snapshot = context.read<RecordFormCubit>().state.currentWorkingRecord;
+    // workingState =
+
     // _currentSliderValue = snapshot.todayRecord?.moodLevel.toDouble() ?? 5.0;
-    dailynoteController.text = snapshot.todayRecord?.howWasYourDay ?? "";
-    hourDurationController.text =
-        snapshot.todayRecord?.sleepTime.inHours.toString() ?? "";
-    minuteDurationController.text =
-        snapshot.todayRecord?.sleepTime.inMinutes.remainder(60).toString() ??
-            "";
+    dailynoteController.text = snapshot?.howWasYourDay ?? "";
+    // hourDurationController.text =
+    //     snapshot?.sleepTime.inHours.toString() ?? "";
+    // minuteDurationController.text =
+    //     snapshot?.sleepTime.inMinutes.remainder(60).toString() ?? "";
+    if (snapshot?.sleepTime.inHours == 0) {
+      canSleep.value = false;
+      hourDurationController.text = "";
+    } else {
+      canSleep.value = true;
+      hourDurationController.text =
+          snapshot?.sleepTime.inHours.toString() ?? "";
+    }
     super.initState();
   }
 
@@ -132,10 +140,11 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
             },
           ),
           BlocListener<RecordFormCubit, RecordFormState>(
-            // listenWhen: (previous, current) => !previous
-            //     .currentWorkingRecord!.recordDate.dateOnly
-            //     .isAtSameMomentAs(
-            //         current.currentWorkingRecord!.recordDate.dateOnly),
+            listenWhen: (previous, current) {
+              return !previous.currentWorkingRecord!.recordDate.dateOnly
+                  .isAtSameMomentAs(
+                      current.currentWorkingRecord!.recordDate.dateOnly);
+            },
             listener: (context, state) {
               //
               final currentHowwasYourDay =
@@ -145,10 +154,10 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                   state.currentWorkingRecord?.sleepTime.inHours.toString() ??
                       "";
               if (currentSleepTime == "0") {
-                canSleep = false;
+                canSleep.value = false;
                 hourDurationController.text = "";
               } else {
-                canSleep = true;
+                canSleep.value = true;
                 hourDurationController.text = currentSleepTime;
               }
             },
@@ -169,11 +178,14 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                       if (_formKey.currentState!.validate()) {
                         final todayRecord = DailyRecord(
                             recordDate: DateTime.now(),
-                            moodLevel: workingState
-                                .currentWorkingRecord!.moodLevel
+                            moodLevel: context
+                                .read<RecordFormCubit>()
+                                .state
+                                .currentWorkingRecord!
+                                .moodLevel
                                 .toInt(),
                             howWasYourDay: dailynoteController.text,
-                            sleepTime: canSleep
+                            sleepTime: canSleep.value
                                 ? Duration(
                                     hours:
                                         int.parse(hourDurationController.text),
@@ -240,118 +252,119 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                 // dropdownMenuEntries: colorEntries,x
                                 onChanged: (int? currentDayOffset) async {
                                   final backupSelectedDayOffset = selectedDay;
-                                  final todayRecord = DailyRecord(
-                                      recordDate: DateTime.now(),
-                                      moodLevel: workingState
-                                          .currentWorkingRecord!.moodLevel
-                                          .toInt(),
-                                      howWasYourDay: dailynoteController.text,
-                                      sleepTime: canSleep
-                                          ? Duration(
-                                              hours: int.parse(
-                                                  hourDurationController.text),
-                                              // minutes: int.parse(minuteDurationController.text)
-                                            )
-                                          : Duration.zero);
+                                  // final recentRecord = DailyRecord(
+                                  //     recordDate: DateTime.now().add(Duration(
+                                  //         days: backupSelectedDayOffset)),
+                                  //     moodLevel: workingState
+                                  //         .currentWorkingRecord!.moodLevel
+                                  //         .toInt(),
+                                  //     howWasYourDay: dailynoteController.text,
+                                  //     sleepTime: canSleep
+                                  //         ? Duration(
+                                  //             hours: int.parse(
+                                  //                 hourDurationController.text),
+                                  //             // minutes: int.parse(minuteDurationController.text)
+                                  //           )
+                                  //         : Duration.zero);
                                   setState(() {
                                     selectedDay = currentDayOffset!;
                                   });
                                   final selectedDate = DateTime.now()
                                       .dateOnly
                                       .add(Duration(days: currentDayOffset!));
-                                  bool isChanged = workingState
-                                          .currentWorkingRecord
-                                          ?.isUpdate(todayRecord) ??
-                                      false;
-                                  if (isChanged) {
-                                    await confirmChangingDateDialog(
-                                        currentDate: DateTime.now()
-                                            .dateOnly
-                                            .add(Duration(
-                                                days: backupSelectedDayOffset)),
-                                        onConfirmSave: () {
-                                          // save into map
-                                          if (_formKey.currentState!
-                                              .validate()) {
-                                            final todayRecord = DailyRecord(
-                                                recordDate: DateTime.now(),
-                                                moodLevel: workingState
-                                                    .currentWorkingRecord!
-                                                    .moodLevel
-                                                    .toInt(),
-                                                howWasYourDay:
-                                                    dailynoteController.text,
-                                                sleepTime: canSleep
-                                                    ? Duration(
-                                                        hours: int.parse(
-                                                            hourDurationController
-                                                                .text),
-                                                        // minutes: int.parse(minuteDurationController.text)
-                                                      )
-                                                    : Duration.zero);
-                                            // context.read<UserSessionBloc>().add(
-                                            //     UpdateDailyRecord(todayRecord));
+                                  // final currentWorkingRecord =
+                                  //     workingState.currentWorkingRecord;
+                                  // bool isChanged = currentWorkingRecord
+                                  //         ?.isUpdate(recentRecord) ??
+                                  //     true;
+                                  // if (isChanged) {
+                                  await confirmChangingDateDialog(
+                                      currentDate: DateTime.now().dateOnly.add(
+                                          Duration(
+                                              days: backupSelectedDayOffset)),
+                                      onConfirmSave: () {
+                                        // save into map
+                                        if (_formKey.currentState!.validate()) {
+                                          final todayRecord = DailyRecord(
+                                              recordDate: DateTime.now(),
+                                              moodLevel: context
+                                                  .read<RecordFormCubit>()
+                                                  .state
+                                                  .currentWorkingRecord!
+                                                  .moodLevel
+                                                  .toInt(),
+                                              howWasYourDay:
+                                                  dailynoteController.text,
+                                              sleepTime: canSleep.value
+                                                  ? Duration(
+                                                      hours: int.parse(
+                                                          hourDurationController
+                                                              .text),
+                                                      // minutes: int.parse(minuteDurationController.text)
+                                                    )
+                                                  : Duration.zero);
+                                          // context.read<UserSessionBloc>().add(
+                                          //     UpdateDailyRecord(todayRecord));
 
-                                            context
-                                                .read<RecordFormCubit>()
-                                                .changeRecordByDate(
-                                                    selectedDate); // todo: support every date
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(SnackBar(
-                                              content: Text("บันทึกสำเร็จ",
-                                                  style: GoogleFonts
-                                                      .ibmPlexSansThai(
-                                                    fontWeight: FontWeight.w400,
-                                                    // fontSize: 18
-                                                  )),
-                                            ));
-                                            context
-                                                .read<RecordFormCubit>()
-                                                .changeRecordByDate(
-                                                    selectedDate);
-                                          } else {
-                                            setState(() {
-                                              selectedDay =
-                                                  backupSelectedDayOffset;
-                                            });
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(SnackBar(
-                                              content: Text(
-                                                  "บันทึกไม่สำเร็จ เนื่องจากข้อมูลไม่ครบถ้วน",
-                                                  style: GoogleFonts
-                                                      .ibmPlexSansThai(
-                                                    fontWeight: FontWeight.w400,
-                                                    // fontSize: 18
-                                                  )),
-                                            ));
-                                          }
-                                          Navigator.of(context).pop();
-                                        },
-                                        onDelete: () {
+                                          context
+                                              .read<RecordFormCubit>()
+                                              .changeRecordByDate(
+                                                  selectedDate); // todo: support every date
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                            content: Text("บันทึกสำเร็จ",
+                                                style:
+                                                    GoogleFonts.ibmPlexSansThai(
+                                                  fontWeight: FontWeight.w400,
+                                                  // fontSize: 18
+                                                )),
+                                          ));
                                           context
                                               .read<RecordFormCubit>()
                                               .changeRecordByDate(selectedDate);
-                                          Navigator.of(context).pop();
-                                        },
-                                        onCancel: () {
+                                        } else {
                                           setState(() {
                                             selectedDay =
                                                 backupSelectedDayOffset;
                                           });
-                                          context
-                                              .read<RecordFormCubit>()
-                                              .changeRecordByDate(DateTime.now()
-                                                  .dateOnly
-                                                  .add(Duration(
-                                                      days:
-                                                          backupSelectedDayOffset)));
-                                          Navigator.of(context).pop();
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                            content: Text(
+                                                "บันทึกไม่สำเร็จ เนื่องจากข้อมูลไม่ครบถ้วน",
+                                                style:
+                                                    GoogleFonts.ibmPlexSansThai(
+                                                  fontWeight: FontWeight.w400,
+                                                  // fontSize: 18
+                                                )),
+                                          ));
+                                        }
+                                        Navigator.of(context).pop();
+                                      },
+                                      onDelete: () {
+                                        context
+                                            .read<RecordFormCubit>()
+                                            .changeRecordByDate(selectedDate);
+                                        Navigator.of(context).pop();
+                                      },
+                                      onCancel: () {
+                                        setState(() {
+                                          selectedDay = backupSelectedDayOffset;
                                         });
-                                  } else {
-                                    context
-                                        .read<RecordFormCubit>()
-                                        .changeRecordByDate(selectedDate);
-                                  }
+                                        context
+                                            .read<RecordFormCubit>()
+                                            .changeRecordByDate(DateTime.now()
+                                                .dateOnly
+                                                .add(Duration(
+                                                    days:
+                                                        backupSelectedDayOffset)));
+                                        Navigator.of(context).pop();
+                                      });
+                                  // }
+                                  //  else {
+                                  //   context
+                                  //       .read<RecordFormCubit>()
+                                  //       .changeRecordByDate(selectedDate);
+                                  // }
 
                                   // confirmChangingDateDialog(
                                   //     DateTime.now().subtract(
@@ -548,135 +561,152 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                           // const SizedBox(
                           //   height: 12,
                           // ),
-                          CheckboxListTile(
-                              contentPadding: EdgeInsets.zero,
-                              controlAffinity: ListTileControlAffinity.leading,
-                              value: !canSleep,
-                              title: Text("ท่านไม่ได้นอน หรือ นอนไม่หลับ"),
-                              onChanged: (bool? checkSleep) {
-                                setState(() {
-                                  canSleep = !checkSleep!;
-                                });
-                              }),
-                          if (canSleep)
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                          ValueListenableBuilder(
+                            valueListenable: canSleep,
+
+                            builder: (BuildContext context, bool value,
+                                    Widget? child) =>
+                                Column(
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 16.0),
-                                  child: Text(
-                                    "เวลานอนรวมโดยประมาณ",
-                                    style: GoogleFonts.ibmPlexSansThai(
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
+                                CheckboxListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    controlAffinity:
+                                        ListTileControlAffinity.leading,
+                                    value: !value,
+                                    title: const Text(
+                                        "ท่านไม่ได้นอน หรือ นอนไม่หลับ"),
+                                    onChanged: (bool? checkSleep) {
+                                      // setState(() {
+                                      canSleep.value = !checkSleep!;
+                                      // });
+                                    }),
+                                if (value)
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 16.0),
+                                        child: Text(
+                                          "เวลานอนรวมโดยประมาณ",
+                                          style: GoogleFonts.ibmPlexSansThai(
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        // flex: 2,
+                                        child: TextFormField(
+                                          // style: TextStyle(fontSize: 40),
+                                          // textAlign: TextAlign.center,
+                                          // enabled: false,
+                                          maxLength: 2,
+                                          validator: (input) {
+                                            if ((input ?? "").isEmpty &&
+                                                value) {
+                                              return "กรุณาใส่จำนวนชั่วโมง";
+                                            }
+                                          },
 
-                                Expanded(
-                                  // flex: 2,
-                                  child: TextFormField(
-                                    enabled: canSleep,
-                                    // style: TextStyle(fontSize: 40),
-                                    // textAlign: TextAlign.center,
-                                    // enabled: false,
-                                    maxLength: 2,
-                                    validator: (input) {
-                                      if ((input ?? "").isEmpty && canSleep) {
-                                        return "กรุณาใส่จำนวนชั่วโมง";
-                                      }
-                                    },
+                                          inputFormatters: <TextInputFormatter>[
+                                            FilteringTextInputFormatter
+                                                .digitsOnly
+                                          ],
+                                          textAlign: TextAlign.left,
+                                          keyboardType: TextInputType.number,
+                                          controller: hourDurationController,
+                                          decoration: const InputDecoration(
+                                            // contentPadding: EdgeInsets.all(12),
+                                            errorMaxLines: 2,
+                                            contentPadding:
+                                                EdgeInsets.only(left: 12),
+                                            // label: Text("ชั่วโมง"),
+                                            counterText: "",
 
-                                    inputFormatters: <TextInputFormatter>[
-                                      FilteringTextInputFormatter.digitsOnly
+                                            errorStyle: TextStyle(
+                                              height: 1,
+                                            ),
+
+                                            alignLabelWithHint: true,
+                                            enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  width: 1,
+                                                  color: Colors
+                                                      .blueGrey), //<-- SEE HERE
+                                            ),
+                                            focusedBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  width: 1,
+                                                  color: Colors
+                                                      .blueGrey), //<-- SEE HERE
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        child: Text("ชั่วโมง"),
+                                      ),
                                     ],
-                                    textAlign: TextAlign.left,
-                                    keyboardType: TextInputType.number,
-                                    controller: hourDurationController,
-                                    decoration: const InputDecoration(
-                                      // contentPadding: EdgeInsets.all(12),
-                                      errorMaxLines: 2,
-                                      contentPadding: EdgeInsets.only(left: 12),
-                                      // label: Text("ชั่วโมง"),
-                                      counterText: "",
-
-                                      errorStyle: TextStyle(
-                                        height: 1,
-                                      ),
-
-                                      alignLabelWithHint: true,
-                                      enabledBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                            width: 1,
-                                            color:
-                                                Colors.blueGrey), //<-- SEE HERE
-                                      ),
-                                      focusedBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                            width: 1,
-                                            color:
-                                                Colors.blueGrey), //<-- SEE HERE
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const Padding(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: Text("ชั่วโมง"),
-                                ),
-                                // Expanded(
-                                //   // flex: 2,
-                                //   child: TextFormField(
-                                //     // style: TextStyle(fontSize: 40),
-                                //     // textAlign: TextAlign.center,
-                                //     // enabled: false,
-                                //     maxLength: 2,
-                                //     validator: (input) {
-                                //       if ((input ?? "").isEmpty) {
-                                //         return "กรุณาใส่จำนวนนาที";
-                                //       }
-                                //       int minute = int.parse(input ?? "");
-                                //       if (!minute.isNegative && minute < 60) {
-                                //         return null;
-                                //       } else {
-                                //         return "ตัวเลขนาทีจะต้องอยู่ระหว่าง 0 - 59";
-                                //       }
-                                //     },
-                                //     inputFormatters: <TextInputFormatter>[
-                                //       FilteringTextInputFormatter.digitsOnly
-                                //     ],
-
-                                //     textAlign: TextAlign.left,
-                                //     keyboardType: TextInputType.number,
-                                //     controller: minuteDurationController,
-                                //     decoration: const InputDecoration(
-                                //       errorMaxLines: 2,
-                                //       errorStyle: TextStyle(
-                                //         height: 1,
-                                //       ),
-                                //       counterText: "",
-                                //       contentPadding: EdgeInsets.only(left: 12),
-                                //       label: Text("นาที"),
-                                //       // alignLabelWithHint: true,
-                                //       enabledBorder: UnderlineInputBorder(
-                                //         borderSide: BorderSide(
-                                //             width: 1,
-                                //             color: Colors.blueGrey), //<-- SEE HERE
-                                //       ),
-                                //       focusedBorder: UnderlineInputBorder(
-                                //         borderSide: BorderSide(
-                                //             width: 1,
-                                //             color: Colors.blueGrey), //<-- SEE HERE
-                                //       ),
-                                //     ),
-                                //   ),
-                                // ),
-                                // SizedBox(
-                                //   width: 16,
-                                // ),
+                                  )
                               ],
                             ),
+
+                            // Expanded(
+                            //   // flex: 2,
+                            //   child: TextFormField(
+                            //     // style: TextStyle(fontSize: 40),
+                            //     // textAlign: TextAlign.center,
+                            //     // enabled: false,
+                            //     maxLength: 2,
+                            //     validator: (input) {
+                            //       if ((input ?? "").isEmpty) {
+                            //         return "กรุณาใส่จำนวนนาที";
+                            //       }
+                            //       int minute = int.parse(input ?? "");
+                            //       if (!minute.isNegative && minute < 60) {
+                            //         return null;
+                            //       } else {
+                            //         return "ตัวเลขนาทีจะต้องอยู่ระหว่าง 0 - 59";
+                            //       }
+                            //     },
+                            //     inputFormatters: <TextInputFormatter>[
+                            //       FilteringTextInputFormatter.digitsOnly
+                            //     ],
+
+                            //     textAlign: TextAlign.left,
+                            //     keyboardType: TextInputType.number,
+                            //     controller: minuteDurationController,
+                            //     decoration: const InputDecoration(
+                            //       errorMaxLines: 2,
+                            //       errorStyle: TextStyle(
+                            //         height: 1,
+                            //       ),
+                            //       counterText: "",
+                            //       contentPadding: EdgeInsets.only(left: 12),
+                            //       label: Text("นาที"),
+                            //       // alignLabelWithHint: true,
+                            //       enabledBorder: UnderlineInputBorder(
+                            //         borderSide: BorderSide(
+                            //             width: 1,
+                            //             color: Colors.blueGrey), //<-- SEE HERE
+                            //       ),
+                            //       focusedBorder: UnderlineInputBorder(
+                            //         borderSide: BorderSide(
+                            //             width: 1,
+                            //             color: Colors.blueGrey), //<-- SEE HERE
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                            // SizedBox(
+                            //   width: 16,
+                            // ),
+                          ),
                         ]),
                   ))),
             )));

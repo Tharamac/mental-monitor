@@ -26,10 +26,10 @@ class DailyRecord extends Equatable {
   //       howWasYourDay = json["how_was_your_day"],
   //       sleepTime = Duration(minutes: json["sleep_time"]);
   bool isUpdate(DailyRecord recent) {
-    return recordDate.dateOnly.compareTo(recent.recordDate.dateOnly) == 0 &&
-        howWasYourDay == recent.howWasYourDay &&
-        moodLevel == recent.moodLevel &&
-        sleepTime == recent.sleepTime;
+    return !recordDate.dateOnly.isAtSameMomentAs(recent.recordDate.dateOnly) ||
+        howWasYourDay != recent.howWasYourDay ||
+        moodLevel != recent.moodLevel ||
+        sleepTime != recent.sleepTime;
   }
 
   factory DailyRecord.emptyRecord(DateTime date) {
