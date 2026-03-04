@@ -17,6 +17,7 @@ import 'package:mental_monitor/constant/constant.dart';
 import 'package:mental_monitor/data_mock.dart';
 import 'package:mental_monitor/file_manager.dart';
 import 'package:mental_monitor/pages/welcome_page.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest.dart' as tzData;
 import 'pages/home_page.dart';
 
@@ -39,7 +40,7 @@ void main() async {
   currentUserData = await FileManager(fileName: currentUserFile)
       .readData()
       .then((value) => jsonDecode(value), onError: (e) => null);
-
+  await Permission.notification.request();
   await LocalNoticeService().setup();
 
   Bloc.observer = AppBlocObserver();
