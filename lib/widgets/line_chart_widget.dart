@@ -9,7 +9,8 @@ import 'package:mental_monitor/util.dart';
 class LineChartWidget extends StatelessWidget {
   final double minX;
   final double maxX;
-  LineChartWidget(this.minX, this.maxX);
+  final Map<DateTime, int>? data;
+  LineChartWidget(this.minX, this.maxX, {this.data});
   final List<Color> gradientColors = [
     const Color(0xff23b6e6),
     const Color(0xff02d39a),
@@ -68,15 +69,15 @@ class LineChartWidget extends StatelessWidget {
               show: true,
               getDrawingHorizontalLine: (value) {
                 return FlLine(
-                  color: const Color(0xff37434d),
-                  strokeWidth: 1,
+                  color: Color.fromARGB(255, 167, 169, 171),
+                  strokeWidth: 0.5,
                 );
               },
               drawVerticalLine: true,
               getDrawingVerticalLine: (value) {
                 return FlLine(
-                  color: const Color(0xff37434d),
-                  strokeWidth: 1,
+                  color: Color.fromARGB(255, 167, 169, 171),
+                  strokeWidth: 0.5,
                 );
               },
               horizontalInterval: 1),
@@ -144,8 +145,21 @@ class LineChartWidget extends StatelessWidget {
           ),
           lineBarsData: [
             LineChartBarData(
-              spots: List.generate(30,
-                  (index) => FlSpot(index.toDouble(), score[index].toDouble())),
+              spots: (data != null)
+                  ? data!.entries.map((e) {
+                      return FlSpot(
+                          data!.length -
+                              (DateTime.now()
+                                  .dateOnly
+                                  .difference(e.key)
+                                  .inDays
+                                  .toDouble()),
+                          e.value.toDouble());
+                    }).toList()
+                  : List.generate(
+                      30,
+                      (index) =>
+                          FlSpot(index.toDouble(), score[index].toDouble())),
               // isCurved: true,
               color: gradientColors[0],
               barWidth: 1,
@@ -168,28 +182,13 @@ class LineChartWidget extends StatelessWidget {
     );
     final today = DateTime.now().dateOnly;
 
-    // switch (value.toInt()) {
-    //   case 2:
-    //     text = const Text('SEPT', style: style);
-    //     break;
-    //   case 7:
-    //     text = const Text('OCT', style: style);
-    //     break;
-    //   case 30:
-    //     text = Text(formatShortBuddhismYear(DateTime.now()), style: style);
-    //     break;
-    //   default:
-    //     text = const Text('');
-    //     break;
-    // }
-
     return SideTitleWidget(
       axisSide: AxisSide.right,
       space: 5,
       angle: pi / 2,
       child: Text(
         formatShortBuddhismYear(
-            today.subtract(Duration(days: 29 - value.toInt()))),
+            today.subtract(Duration(days: data!.length - value.toInt()))),
         style: style,
         textAlign: TextAlign.left,
       ),
