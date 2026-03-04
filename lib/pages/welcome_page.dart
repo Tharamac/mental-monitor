@@ -29,6 +29,9 @@ class WelcomePage extends StatelessWidget {
                 Center(
                   child: ElevatedButton(
                       onPressed: () {
+                        // context
+                        //     .read<UserSessionBloc>()
+                        //     .add(RegisterUserEvent(controller.text));
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (builder) => HomePage(
                                 currentUserData: left(controller.text))));

@@ -18,38 +18,45 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
     on<RegisterUserEvent>((event, emit) {
       final User newUser = User(name: event.newName);
       final FileManager newRecordsFile = FileManager(fileName: currentUserFile);
+      print("Registered ${jsonEncode(newUser.toJson())}");
       newRecordsFile.writedata(jsonEncode(
-      newUser.toJson(),
-    ));
+        newUser.toJson(),
+      ));
       emit(state.copyWith(name: event.newName));
     });
 
     on<ImportExistingUserEvent>((event, emit) {
       // todo implement current note check
       final existingUser = User.fromJson(event.currentUserData);
+      bool isTodayRecorded = false;
       existingUser.records.sort((a, b) => b.recordDate.compareTo(a.recordDate));
-      final latestRecordedDateTime = existingUser.records[0].recordDate;
-      final latestRecordedDate = DateTime(latestRecordedDateTime.year,
-          latestRecordedDateTime.month, latestRecordedDateTime.day);
-      final today = DateTime(
-          DateTime.now().year, DateTime.now().month, DateTime.now().day);
+      if (existingUser.records.isNotEmpty) {
+        final latestRecordedDateTime = existingUser.records[0].recordDate;
+        final latestRecordedDate = DateTime(latestRecordedDateTime.year,
+            latestRecordedDateTime.month, latestRecordedDateTime.day);
+
+        final today = DateTime(
+            DateTime.now().year, DateTime.now().month, DateTime.now().day);
+        isTodayRecorded = today.compareTo(latestRecordedDate) == 0;
+      }
 
       // print(today.compareTo(latestRecordedDate) == 0);
       emit(
         state.copyWith(
           name: existingUser.name,
           records: existingUser.records.skip(1).toList(),
-          isTodayRecorded: today.compareTo(latestRecordedDate) == 0,
-          todayRecord: today.compareTo(latestRecordedDate) == 0
-              ? existingUser.records[0]
-              : null,
+          isTodayRecorded: isTodayRecorded,
+          todayRecord: isTodayRecorded ? existingUser.records.first : null,
         ),
       );
     });
 
     on<UpdateDailyRecord>(((event, emit) {
-      final newList = [event.dailyRecord, ...state.records];
-      final savedUser = User(name: state.name, records: newList);
+      final currentList = [event.dailyRecord, ...state.records];
+      if (state.todayRecord != null) {
+        currentList.first = event.dailyRecord;
+      }
+      final savedUser = User(name: state.name, records: currentList);
       final FileManager updateRecordsFile =
           FileManager(fileName: currentUserFile);
       updateRecordsFile.writedata(jsonEncode(
@@ -60,7 +67,6 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
     }));
     on<ArchiveRecord>((event, emit) {
       if (state.todayRecord == null) return;
-      print("update");
       final newList = [state.todayRecord!, ...state.records];
       emit(state.clearTodayRecord());
       emit(state.copyWith(

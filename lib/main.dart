@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/services.dart';
 
 import 'package:dartz/dartz.dart' hide State;
 import 'package:flutter/material.dart';
@@ -24,6 +25,7 @@ import 'pages/home_page.dart';
 const useMockData = false;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   Intl.defaultLocale = 'th';
   initializeDateFormatting();
   tzData.initializeTimeZones();
@@ -36,12 +38,9 @@ void main() async {
       mockUserData.toJson(),
     ));
   }
-  currentUserData =
-      await FileManager(fileName: currentUserFile).readData().then((value) {
-    print(value);
-    final conv = jsonDecode(value);
-    print(conv);
-  }, onError: (e) => null);
+  currentUserData = await FileManager(fileName: currentUserFile)
+      .readData()
+      .then((value) => jsonDecode(value), onError: (e) => null);
 
   await LocalNoticeService().setup();
   // DateTime.parse(currentUserData["notified_time"])
@@ -70,6 +69,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    print(currentUserData);
     final child = MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'MoodMonitor',
