@@ -19,7 +19,7 @@ import 'package:mental_monitor/pages/welcome_page.dart';
 import 'package:timezone/data/latest.dart' as tzData;
 import 'pages/home_page.dart';
 
-const useMockData = false;
+const useMockData = true;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);

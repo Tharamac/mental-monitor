@@ -21,8 +21,8 @@ class EntryRecordCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final widgetColor = useDefaultColor
-        ? Colors.lightBlue[500]
-        : moodSliderPalette2[record.moodLevel - 1];
+        ? Colors.lightBlue[300]
+        : moodSliderPalette1[record.moodLevel - 1];
 
     return Card(
       color: widgetColor,
@@ -44,7 +44,7 @@ class EntryRecordCard extends StatelessWidget {
                       style: GoogleFonts.ibmPlexSansThai(
                         color: Colors.black,
                         fontWeight: FontWeight.w600,
-                        height: 1.4,
+                        // height: 1.4,
                       ),
                     ),
                     Text(
@@ -52,7 +52,7 @@ class EntryRecordCard extends StatelessWidget {
                       style: GoogleFonts.ibmPlexSansThai(
                         color: Colors.black,
                         fontWeight: FontWeight.w600,
-                        height: 1.4,
+                        // height: 1.4,
                       ),
                     ),
                     Row(
@@ -60,14 +60,14 @@ class EntryRecordCard extends StatelessWidget {
                       children: [
                         const Icon(
                           Icons.nights_stay_rounded,
-                          size: 16,
+                          size: 14,
                           color: Colors.black,
                         ),
                         Text(
-                          ' ${prettyDuration(record.sleepTime, locale: DurationLocale.fromLanguageCode('th')!)}',
+                          ' ${record.sleepTime.inHours} ชั่วโมง',
                           style: GoogleFonts.ibmPlexSansThai(
                               fontWeight: FontWeight.w600,
-                              // height: 1.2,
+                              // height: 1.4,
                               // decoration: TextDecoration(),
                               color: Colors.black),
                         )
@@ -116,7 +116,7 @@ class EntryRecordCard extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                   color: HSLColor.fromColor(widgetColor!)
-                      .withLightness(0.7)
+                      .withLightness(0.8)
                       .toColor(),
                   // color: widgetColor?.withAlpha(128),
                   borderRadius: BorderRadius.circular(6)),
