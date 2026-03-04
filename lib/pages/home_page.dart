@@ -148,11 +148,7 @@ class _HomePageState extends State<HomePage> {
                   //         builder: (minX, maxX) {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Scrollbar(
-                      thickness: 15,
-                      trackVisibility: true,
-                      thumbVisibility: true,
-                      scrollbarOrientation: ScrollbarOrientation.bottom,
+                
                       // controller: _firstController,
                       child: SingleChildScrollView(
                         // reverse: true,
@@ -180,7 +176,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                ),
+              
                 // AspectRatio(
                 // aspectRatio: 2,
                 // child: _buildTodayRecord(state)),
