@@ -38,5 +38,10 @@ class UpdateNotifiedTime extends UserSessionEvent {
   const UpdateNotifiedTime(this.notifiedTime);
 }
 
+class LoadNotifiedTime extends UserSessionEvent {
+  //   // final DailyRecord dailyRecord;
+  const LoadNotifiedTime();
+}
+
 // class RegisterUser extends UserEvent {}
 

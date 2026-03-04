@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:mental_monitor/api/notified_time_datasource.dart';
 import 'package:mental_monitor/constant/constant.dart';
 import 'package:mental_monitor/file_manager.dart';
 import 'package:mental_monitor/model/daily_record.dart';
@@ -77,6 +79,7 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
       emit(state.clearTodayRecord());
       // emit(state.copyWith(records: state.records));
     });
+
     on<UpdateNotifiedTime>((event, emit) {
       DateTime notifiedTime = DateTime(
           DateTime.now().year,
@@ -85,6 +88,7 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
           event.notifiedTime.hour,
           event.notifiedTime.minute,
           0);
+      
       final savedUser = User(
           name: state.name,
           records: state.records,
@@ -99,6 +103,11 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
         notifiedTime: notifiedTime,
       ));
     });
+
+    on<LoadNotifiedTime>(
+      (event, emit) {},
+    );
+
     on<ReDailyRecord>(((event, emit) {
       emit(state.copyWith(
         isTodayRecorded: false,
