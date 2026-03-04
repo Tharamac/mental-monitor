@@ -78,14 +78,14 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
             ],
           ),
         );
-    DropdownMenuItem<int> dropDownChildren(String dayAgoText, int dayAgo) =>
+    DropdownMenuItem<int> dropDownChildren(String dayAgoText, int? dayAgo) =>
         DropdownMenuItem<int>(
-          value: -dayAgo,
+          value: -(dayAgo ?? 0),
           child: Row(
             // crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                dayAgoText,
+                "${dayAgo ?? ""}$dayAgoText",
                 style: GoogleFonts.ibmPlexSansThai(
                   fontSize: 15,
                   fontWeight: FontWeight.w800,
@@ -93,7 +93,7 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                 ),
               ),
               Text(
-                " — ${formatDateInThai(DateTime.now().subtract(Duration(days: dayAgo)))}",
+                " — ${formatDateInThai(DateTime.now().subtract(Duration(days: dayAgo ?? 0)))}",
                 style: GoogleFonts.ibmPlexSansThai(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -235,7 +235,7 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                   for (var i = 3; i > 0; i--) ...[
                                     dropDownChildren(" วันที่แล้ว", i)
                                   ],
-                                  ...[dropDownChildren("วันนี้", 0)],
+                                  ...[dropDownChildren("วันนี้", null)],
                                 ],
                                 // dropdownMenuEntries: colorEntries,x
                                 onChanged: (int? currentDayOffset) async {
@@ -305,7 +305,15 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                                     // fontSize: 18
                                                   )),
                                             ));
+                                            context
+                                                .read<RecordFormCubit>()
+                                                .changeRecordByDate(
+                                                    selectedDate);
                                           } else {
+                                            setState(() {
+                                              selectedDay =
+                                                  backupSelectedDayOffset;
+                                            });
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(SnackBar(
                                               content: Text(
@@ -339,11 +347,11 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                                           backupSelectedDayOffset)));
                                           Navigator.of(context).pop();
                                         });
+                                  } else {
+                                    context
+                                        .read<RecordFormCubit>()
+                                        .changeRecordByDate(selectedDate);
                                   }
-
-                                  context
-                                      .read<RecordFormCubit>()
-                                      .changeRecordByDate(selectedDate);
 
                                   // confirmChangingDateDialog(
                                   //     DateTime.now().subtract(
