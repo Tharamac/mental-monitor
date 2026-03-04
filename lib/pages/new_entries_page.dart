@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -26,6 +27,8 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
   TextEditingController dailynoteController = TextEditingController();
   TextEditingController hourDurationController = TextEditingController();
   TextEditingController minuteDurationController = TextEditingController();
+  int selectedDay = 0;
+  bool canSleep = true;
 
   @override
   void initState() {
@@ -42,6 +45,80 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
 
   @override
   Widget build(BuildContext context) {
+    Widget segmentControlChildren(String dayAgoText, int dayAgo) => Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                dayAgoText,
+                style: GoogleFonts.ibmPlexSansThai(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: (-dayAgo == selectedDay)
+                      ? Colors.white
+                      : Colors.blue[400],
+                ),
+              ),
+              Text(
+                formatDateInThai(
+                    DateTime.now().subtract(Duration(days: dayAgo)),
+                    shorten: true),
+                style: GoogleFonts.ibmPlexSansThai(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                    color: (-dayAgo == selectedDay)
+                        ? Colors.white
+                        : Colors.blue[400],
+                    height: 0.8),
+              ),
+            ],
+          ),
+        );
+    DropdownMenuItem<int> dropDownChildren(String dayAgoText, int dayAgo) =>
+        DropdownMenuItem<int>(
+          value: -dayAgo,
+          child: Row(
+            // crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                dayAgoText,
+                style: GoogleFonts.ibmPlexSansThai(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.blue,
+                ),
+              ),
+              Text(
+                " — ${formatDateInThai(DateTime.now().subtract(Duration(days: dayAgo)))}",
+                style: GoogleFonts.ibmPlexSansThai(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.blue,
+                ),
+              ),
+            ],
+          ),
+        );
+    // RichText(
+    //   text: TextSpan(
+    //       text: "$dayAgoText\n",
+    //       style: GoogleFonts.ibmPlexSansThai(
+    //         fontSize: 12,
+    //         fontWeight: FontWeight.w800,
+    //         color: Colors.blue[400],
+    //       ),
+    //       children: [
+    //         TextSpan(
+    //             text: formatDateInThai(
+    //                 DateTime.now().subtract(Duration(days: dayAgo)),
+    //                 shorten: true),
+    //             style: GoogleFonts.ibmPlexSansThai(
+    //               fontSize: 12,
+    //               fontWeight: FontWeight.w400,
+    //             ))
+    //       ]),
+    // );
     return Scaffold(
         // resizeToAvoidBottomInset: false,
         appBar: AppBar(
@@ -59,7 +136,6 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                         recordDate: DateTime.now(),
                         moodLevel: _currentSliderValue.toInt(),
                         howWasYourDay: dailynoteController.text,
-      
                         sleepTime: Duration(
                             hours: int.parse(hourDurationController.text),
                             minutes: int.parse(minuteDurationController.text)));
@@ -97,26 +173,93 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TextFormField(
-                          readOnly: true,
-                          controller: TextEditingController(
-                              text: formatDateInThai(DateTime.now())),
-                          maxLines: 1,
-                          decoration: const InputDecoration(
-                            // contentPadding: EdgeInsets.all(8),
-                            label: const Text("วันที่"),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  width: 2,
-                                  color: Colors.blueGrey), //<-- SEE HERE
-                            ),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  width: 2,
-                                  color: Colors.blueGrey), //<-- SEE HERE
-                            ),
-                          ),
-                        ),
+                        // Container(
+                        //   width: MediaQuery.of(context).size.width,
+                        //   child: CupertinoSegmentedControl<int>(
+                        //     groupValue: selectedDay,
+                        //     // selectedColor: Colors.white,
+                        //     children: {
+                        //       for (var i = 3; i > 0; i--) ...{
+                        //         -i: segmentControlChildren("$i วันที่แล้ว", i)
+                        //       },
+                        //       ...{0: segmentControlChildren("วันนี้", 0)},
+                        //     },
+                        //     // {
+                        //     //   // -3:
+                        //     //   -3: segmentControlChildren("3 วันที่แล้ว", 3),
+                        //     //   -2: segmentControlChildren("2 วันที่แล้ว", 2),
+
+                        //     //   -1: segmentControlChildren("1 วันที่แล้ว", 1),
+                        //     //   0: Text("วันนี้"),
+                        //     // },
+                        //     onValueChanged: (int value) {
+                        //       setState(() {
+                        //         selectedDay = value;
+                        //       });
+                        //     },
+                        //     padding: EdgeInsets.zero,
+                        //   ),
+                        // ),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: DropdownButtonFormField<int>(
+                              value: selectedDay,
+                              // menuMaxHeight: 35,
+                              // initialSelection: selectedSegment,
+                              // controller: colorController,
+                              // label: const Text('Color'),
+                              decoration: InputDecoration(
+                                // contentPadding: EdgeInsets.all(8),
+                                label: Text("วันที่",
+                                    style: GoogleFonts.ibmPlexSansThai(
+                                      fontSize: 18,
+                                      color: Colors.blueGrey,
+                                      fontWeight: FontWeight.w800,
+                                    )),
+                                enabledBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      width: 2,
+                                      color: Colors.blueGrey), //<-- SEE HERE
+                                ),
+                                focusedBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      width: 2,
+                                      color: Colors.blueGrey), //<-- SEE HERE
+                                ),
+                              ),
+                              items: [
+                                for (var i = 3; i > 0; i--) ...[
+                                  dropDownChildren("$i วันที่แล้ว", i)
+                                ],
+                                ...[dropDownChildren("วันนี้", 0)],
+                              ],
+                              // dropdownMenuEntries: colorEntries,x
+                              onChanged: (int? color) {
+                                setState(() {
+                                  selectedDay = color!;
+                                });
+                              },
+                            )),
+                        // TextFormField(
+                        //   readOnly: true,
+                        //   controller: TextEditingController(
+                        //       text: formatDateInThai(DateTime.now())),
+                        //   maxLines: 1,
+                        //   decoration: const InputDecoration(
+                        //     // contentPadding: EdgeInsets.all(8),
+                        //     label: const Text("วันที่"),
+                        //     enabledBorder: const OutlineInputBorder(
+                        //       borderSide: const BorderSide(
+                        //           width: 2,
+                        //           color: Colors.blueGrey), //<-- SEE HERE
+                        //     ),
+                        //     focusedBorder: const OutlineInputBorder(
+                        //       borderSide: const BorderSide(
+                        //           width: 2,
+                        //           color: Colors.blueGrey), //<-- SEE HERE
+                        //     ),
+                        //   ),
+                        // ),
                         // Text("30 เมษายน 2565"),
                         const Divider(),
                         Row(
@@ -140,21 +283,27 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                           fontSize: 12,
                                           fontWeight: FontWeight.w400,
                                         )),
-                                    Row(
-                                        children: moodSliderPalette2
-                                            .asMap()
-                                            .entries
-                                            .map((entry) {
-                                      int idx = entry.key;
-                                      Color? val = entry.value;
+                                    // Row(
+                                    //     children: moodSliderPalette1
+                                    //         .asMap()
+                                    //         .entries
+                                    //         .map((entry) {
+                                    //   int idx = entry.key;
+                                    //   Color? val = entry.value;
 
-                                      return Expanded(
-                                          child: Container(
-                                        color: val,
-                                        child: Text((idx + 1).toString()),
-                                        height: 30,
-                                      ));
-                                    }).toList()),
+                                    //   return Expanded(
+                                    //       child: Column(
+                                    //     children: [
+                                    //       Container(
+                                    //         color: val,
+                                    //         height: 30,
+                                    //       ),
+                                    //       Center(
+                                    //           child:
+                                    //               Text((idx + 1).toString())),
+                                    //     ],
+                                    //   ));
+                                    // }).toList()),
                                   ],
                                 )),
                             Expanded(
@@ -166,7 +315,7 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                     _currentSliderValue.toInt().toString(),
                                     textAlign: TextAlign.center,
                                     style: GoogleFonts.ibmPlexSansThai(
-                                      color: moodSliderPalette2[
+                                      color: moodSliderPalette1[
                                           _currentSliderValue.toInt() - 1],
                                       fontSize: 48,
                                       height: 1,
@@ -190,16 +339,18 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                             max: 10,
                             min: 1,
                             divisions: 9,
+                            // label: _currentSliderValue.toString(),
                             // mouseCursor: MouseCursor.defer,
-                            activeColor: moodSliderPalette2[
+                            activeColor: moodSliderPalette1[
                                     _currentSliderValue.toInt() - 1]
                                 ?.withAlpha(120),
-                            inactiveColor: moodSliderPalette2[
+                            inactiveColor: moodSliderPalette1[
                                     _currentSliderValue.toInt() - 1]
                                 ?.withAlpha(120),
-                            thumbColor: moodSliderPalette2[
+                            thumbColor: moodSliderPalette1[
                                 _currentSliderValue.toInt() - 1],
                             label: _currentSliderValue.round().toString(),
+
                             onChanged: (double value) {
                               setState(() {
                                 _currentSliderValue = value;
@@ -220,7 +371,7 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                             }
                           },
                           decoration: const InputDecoration(
-                            contentPadding: const EdgeInsets.all(12),
+                            contentPadding: EdgeInsets.all(12),
                             label: Text("วันนี้รู้สึกอย่างไรบ้าง :"),
                             alignLabelWithHint: true,
                             enabledBorder: OutlineInputBorder(
@@ -244,125 +395,137 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
 
-                        const SizedBox(
-                          height: 12,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 16.0),
-                              child: Text(
-                                "เวลานอนรวม",
-                                style: GoogleFonts.ibmPlexSansThai(
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-
-                            Expanded(
-                              // flex: 2,
-                              child: TextFormField(
-                                // style: TextStyle(fontSize: 40),
-                                // textAlign: TextAlign.center,
-                                // enabled: false,
-                                maxLength: 2,
-                                validator: (input) {
-                                  if ((input ?? "").isEmpty) {
-                                    return "กรุณาใส่จำนวนชั่วโมง";
-                                  }
-                                },
-
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.digitsOnly
-                                ],
-                                textAlign: TextAlign.left,
-                                keyboardType: TextInputType.number,
-                                controller: hourDurationController,
-                                decoration: const InputDecoration(
-                                  // contentPadding: EdgeInsets.all(12),
-                                  errorMaxLines: 2,
-                                  contentPadding:
-                                      const EdgeInsets.only(left: 12),
-                                  label: const Text("ชั่วโมง"),
-                                  counterText: "",
-
-                                  errorStyle: TextStyle(
-                                    height: 1,
-                                  ),
-
-                                  // alignLabelWithHint: true,
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 1,
-                                        color: Colors.blueGrey), //<-- SEE HERE
-                                  ),
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 1,
-                                        color: Colors.blueGrey), //<-- SEE HERE
+                        // const SizedBox(
+                        //   height: 12,
+                        // ),
+                        CheckboxListTile(
+                            contentPadding: EdgeInsets.zero,
+                            controlAffinity: ListTileControlAffinity.leading,
+                            value: !canSleep,
+                            title: Text("ท่านไม่ได้นอน หรือ นอนไม่หลับ"),
+                            onChanged: (bool? checkSleep) {
+                              setState(() {
+                                canSleep = !checkSleep!;
+                              });
+                            }),
+                        if (canSleep)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 16.0),
+                                child: Text(
+                                  "เวลานอนรวมโดยประมาณ",
+                                  style: GoogleFonts.ibmPlexSansThai(
+                                    fontSize: 16,
                                   ),
                                 ),
                               ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text(":"),
-                            ),
-                            Expanded(
-                              // flex: 2,
-                              child: TextFormField(
-                                // style: TextStyle(fontSize: 40),
-                                // textAlign: TextAlign.center,
-                                // enabled: false,
-                                maxLength: 2,
-                                validator: (input) {
-                                  if ((input ?? "").isEmpty) {
-                                    return "กรุณาใส่จำนวนนาที";
-                                  }
-                                  int minute = int.parse(input ?? "");
-                                  if (!minute.isNegative && minute < 60) {
-                                    return null;
-                                  } else {
-                                    return "ตัวเลขนาทีจะต้องอยู่ระหว่าง 0 - 59";
-                                  }
-                                },
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.digitsOnly
-                                ],
 
-                                textAlign: TextAlign.left,
-                                keyboardType: TextInputType.number,
-                                controller: minuteDurationController,
-                                decoration: const InputDecoration(
-                                  errorMaxLines: 2,
-                                  errorStyle: TextStyle(
-                                    height: 1,
-                                  ),
-                                  counterText: "",
-                                  contentPadding:
-                                      const EdgeInsets.only(left: 12),
-                                  label: Text("นาที"),
-                                  // alignLabelWithHint: true,
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 1,
-                                        color: Colors.blueGrey), //<-- SEE HERE
-                                  ),
-                                  focusedBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 1,
-                                        color: Colors.blueGrey), //<-- SEE HERE
+                              Expanded(
+                                // flex: 2,
+                                child: TextFormField(
+                                  enabled: canSleep,
+                                  // style: TextStyle(fontSize: 40),
+                                  // textAlign: TextAlign.center,
+                                  // enabled: false,
+                                  maxLength: 2,
+                                  validator: (input) {
+                                    if ((input ?? "").isEmpty && canSleep) {
+                                      return "กรุณาใส่จำนวนชั่วโมง";
+                                    }
+                                  },
+
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  textAlign: TextAlign.left,
+                                  keyboardType: TextInputType.number,
+                                  controller: hourDurationController,
+                                  decoration: const InputDecoration(
+                                    // contentPadding: EdgeInsets.all(12),
+                                    errorMaxLines: 2,
+                                    contentPadding: EdgeInsets.only(left: 12),
+                                    // label: Text("ชั่วโมง"),
+                                    counterText: "",
+
+                                    errorStyle: TextStyle(
+                                      height: 1,
+                                    ),
+
+                                    alignLabelWithHint: true,
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                          width: 1,
+                                          color:
+                                              Colors.blueGrey), //<-- SEE HERE
+                                    ),
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                          width: 1,
+                                          color:
+                                              Colors.blueGrey), //<-- SEE HERE
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            // SizedBox(
-                            //   width: 16,
-                            // ),
-                          ],
-                        ),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text("ชั่วโมง"),
+                              ),
+                              // Expanded(
+                              //   // flex: 2,
+                              //   child: TextFormField(
+                              //     // style: TextStyle(fontSize: 40),
+                              //     // textAlign: TextAlign.center,
+                              //     // enabled: false,
+                              //     maxLength: 2,
+                              //     validator: (input) {
+                              //       if ((input ?? "").isEmpty) {
+                              //         return "กรุณาใส่จำนวนนาที";
+                              //       }
+                              //       int minute = int.parse(input ?? "");
+                              //       if (!minute.isNegative && minute < 60) {
+                              //         return null;
+                              //       } else {
+                              //         return "ตัวเลขนาทีจะต้องอยู่ระหว่าง 0 - 59";
+                              //       }
+                              //     },
+                              //     inputFormatters: <TextInputFormatter>[
+                              //       FilteringTextInputFormatter.digitsOnly
+                              //     ],
+
+                              //     textAlign: TextAlign.left,
+                              //     keyboardType: TextInputType.number,
+                              //     controller: minuteDurationController,
+                              //     decoration: const InputDecoration(
+                              //       errorMaxLines: 2,
+                              //       errorStyle: TextStyle(
+                              //         height: 1,
+                              //       ),
+                              //       counterText: "",
+                              //       contentPadding: EdgeInsets.only(left: 12),
+                              //       label: Text("นาที"),
+                              //       // alignLabelWithHint: true,
+                              //       enabledBorder: UnderlineInputBorder(
+                              //         borderSide: BorderSide(
+                              //             width: 1,
+                              //             color: Colors.blueGrey), //<-- SEE HERE
+                              //       ),
+                              //       focusedBorder: UnderlineInputBorder(
+                              //         borderSide: BorderSide(
+                              //             width: 1,
+                              //             color: Colors.blueGrey), //<-- SEE HERE
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
+                              // SizedBox(
+                              //   width: 16,
+                              // ),
+                            ],
+                          ),
 
                         // Text("วันนี้คุณตื่นกี่โมง"),
                         // Row(
