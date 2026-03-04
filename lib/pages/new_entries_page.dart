@@ -29,7 +29,14 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    final snapshot = context.read<UserSessionBloc>().state;
+    _currentSliderValue = snapshot.todayRecord?.moodLevel.toDouble() ?? 5.0;
+    dailynoteController.text = snapshot.todayRecord?.howWasYourDay ?? "";
+    hourDurationController.text =
+        snapshot.todayRecord?.sleepTime.inHours.toString() ?? "";
+    minuteDurationController.text =
+        snapshot.todayRecord?.sleepTime.inMinutes.remainder(60).toString() ??
+            "";
     super.initState();
   }
 
@@ -64,7 +71,11 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                         .read<UserSessionBloc>()
                         .add(UpdateDailyRecord(todayRecord));
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text("บันทึกสำเร็จ"),
+                      content: Text("บันทึกสำเร็จ",
+                          style: GoogleFonts.ibmPlexSansThai(
+                            fontWeight: FontWeight.w400,
+                            // fontSize: 18
+                          )),
                     ));
                     Navigator.of(context).pop();
                   }
@@ -129,7 +140,7 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                           fontWeight: FontWeight.w400,
                                         )),
                                     Row(
-                                        children: emotionSliderPalette2
+                                        children: moodSliderPalette2
                                             .asMap()
                                             .entries
                                             .map((entry) {
@@ -154,7 +165,7 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                     _currentSliderValue.toInt().toString(),
                                     textAlign: TextAlign.center,
                                     style: GoogleFonts.ibmPlexSansThai(
-                                      color: emotionSliderPalette2[
+                                      color: moodSliderPalette2[
                                           _currentSliderValue.toInt() - 1],
                                       fontSize: 48,
                                       height: 1,
@@ -179,13 +190,13 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                             min: 1,
                             divisions: 9,
                             // mouseCursor: MouseCursor.defer,
-                            activeColor: emotionSliderPalette2[
+                            activeColor: moodSliderPalette2[
                                     _currentSliderValue.toInt() - 1]
                                 ?.withAlpha(120),
-                            inactiveColor: emotionSliderPalette2[
+                            inactiveColor: moodSliderPalette2[
                                     _currentSliderValue.toInt() - 1]
                                 ?.withAlpha(120),
-                            thumbColor: emotionSliderPalette2[
+                            thumbColor: moodSliderPalette2[
                                 _currentSliderValue.toInt() - 1],
                             label: _currentSliderValue.round().toString(),
                             onChanged: (double value) {

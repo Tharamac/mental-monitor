@@ -1,3 +1,4 @@
+import 'package:cron/cron.dart';
 import 'package:dartz/dartz.dart' hide State;
 import 'package:duration/duration.dart';
 import 'package:duration/locale.dart';
@@ -25,8 +26,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final cron = Cron();
   @override
   void initState() {
+    clearTodayRecord();
     widget.currentUserData.fold((newUser) {
       context.read<UserSessionBloc>().add(RegisterUserEvent(newUser));
     }, (existingUser) {
@@ -35,6 +38,13 @@ class _HomePageState extends State<HomePage> {
           .add(ImportExistingUserEvent(existingUser));
     });
     super.initState();
+  }
+
+  clearTodayRecord() {
+    cron.schedule(Schedule.parse('0 0 * * *'), () async {
+      print("tick");
+      context.read<UserSessionBloc>().add(ArchiveRecord());
+    });
   }
 
   @override
@@ -55,7 +65,6 @@ class _HomePageState extends State<HomePage> {
 
       body: BlocBuilder<UserSessionBloc, UserSessionState>(
         builder: (context, state) {
-          print(state);
           return SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(8),
@@ -115,7 +124,7 @@ class _HomePageState extends State<HomePage> {
                   //     child: Text(),
                   //   ),
                   // ),
-                  Divider(),
+                  const Divider(),
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),
                     child: Text(
@@ -128,14 +137,16 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Expanded(
                       flex: 2,
-                      child: ListView(
-                        children: state.records
-                            .map((record) => EntryRecordCard(
-                                  record: record,
-                                  // useDefaultColor: true,
-                                ))
-                            .toList(),
-                      ))
+                      child: (state.records.isNotEmpty)
+                          ? ListView(
+                              children: state.records
+                                  .map((record) => EntryRecordCard(
+                                        record: record,
+                                        // useDefaultColor: true,
+                                      ))
+                                  .toList(),
+                            )
+                          : const Center(child: Text("ไม่มีบันทึกที่ผ่านมา"))),
                 ],
               ),
             ),
@@ -155,7 +166,7 @@ class _HomePageState extends State<HomePage> {
     final tdRec = state.todayRecord;
     final widgetColor = tdRec == null
         ? Colors.blueGrey[400]
-        : emotionSliderPalette2[tdRec.moodLevel - 1];
+        : moodSliderPalette2[tdRec.moodLevel - 1];
 
     return Card(
       color: widgetColor,
@@ -257,7 +268,7 @@ class _HomePageState extends State<HomePage> {
                       borderRadius: BorderRadius.circular(6)),
                   child: tdRec == null
                       ? Text(
-                          "วันนี้ยังไม่ได้บันทึกเรื่องราว กดเพื่อบันทึกเลย",
+                          "วันนี้ยังไม่ได้บันทึกเรื่องราว\nแท็บ [+ สร้างบันทึก] เพื่อเริ่มเลย",
                           // textAlign: TextAlign.center,
                           style: GoogleFonts.ibmPlexSansThai(
                             fontWeight: FontWeight.w600,

@@ -12,7 +12,7 @@ final mockUserData = User(name: "makuji", records: [
       howWasYourDay: "ดูเกี๊ยว",
       sleepTime: const Duration(hours: 6, minutes: 34)),
   DailyRecord(
-      recordDate: dayShift(1),
+      recordDate: dayShift(0),
       moodLevel: 6,
       howWasYourDay: "ดูเจ๊ปลาทอง",
       sleepTime: const Duration(hours: 6, minutes: 33)),

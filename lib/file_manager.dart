@@ -3,7 +3,8 @@ import 'package:path_provider/path_provider.dart';
 
 class FileManager {
   final String fileName;
-  FileManager({required this.fileName});
+  final String format;
+  FileManager({required this.fileName, this.format = "json"});
 
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
@@ -11,29 +12,24 @@ class FileManager {
     return directory.path;
   }
 
-  Future<File> get _localFile async {
+  Future<File> get localFile async {
     final path = await _localPath;
-    return File('$path/$fileName.json');
+    return File('$path/$fileName.$format');
   }
 
   Future<String> readData() async {
-    try {
-      final file = await _localFile;
+    final file = await localFile;
 
-      // Read the file
-      final contents = file.readAsStringSync();
+    // Read the file
+    final contents = file.readAsStringSync();
 
-      return contents;
-    } catch (e) {
-      // If encountering an error, return 0
-      return "";
-    }
+    return contents;
   }
 
   Future<File> writedata(String data) async {
-    final file = await _localFile;
+    final file = await localFile;
 
     // Write the file
-    return file.writeAsString('data');
+    return file.writeAsString(data);
   }
 }
