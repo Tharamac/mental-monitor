@@ -6,6 +6,7 @@ import 'package:mental_monitor/api/notification_api.dart';
 import 'package:mental_monitor/api/notified_time_datasource.dart';
 import 'package:mental_monitor/blocs/record_form/record_form_state.dart';
 import 'package:mental_monitor/blocs/user/user_bloc.dart';
+import 'package:mental_monitor/model/core/datetime_expansion.dart';
 import 'package:mental_monitor/model/daily_record.dart';
 import 'package:mental_monitor/model/user.dart';
 
@@ -15,23 +16,33 @@ class RecordFormCubit extends Cubit<RecordFormState> {
   RecordFormCubit() : super(const RecordFormInitial());
 
   void loadLatestRecords(List<DailyRecord> records) {
-    emit(state.copyWith(newUpdatedRecords: records));
+    final today = DateTime.now().dateOnly;
+    final DailyRecord todayRecord = records.firstWhere((element) {
+      final recordDate = element.recordDate.dateOnly;
+      return today.compareTo(recordDate) == 0;
+    }, orElse: () => DailyRecord.emptyRecord(today));
+    emit(state.copyWith(newUpdatedRecords: records, newRecord: todayRecord));
   }
 
   void changeRecordByDate(DateTime selectedDateTime) {
+    final selectedDate = selectedDateTime.dateOnly;
     final selectRecord = state.updatedRecords?.firstWhere(
-          (element) => element.recordDate == selectedDateTime,
-          orElse: () => DailyRecord.emptyRecord(selectedDateTime),
+          (element) {
+            return selectedDateTime.dateOnly
+                    .compareTo(element.recordDate.dateOnly) ==
+                0;
+          },
+          orElse: () => DailyRecord.emptyRecord(selectedDate),
         ) ??
         DailyRecord.emptyRecord(selectedDateTime);
     emit(state.copyWith(newRecord: selectRecord));
   }
 
   void updateData(
-      int? newMoodLevel, String? newHowWasYourDay, Duration? newSleepTime) {
-    if (state.currentRecord != null) {
+      {int? newMoodLevel, String? newHowWasYourDay, Duration? newSleepTime}) {
+    if (state.currentWorkingRecord != null) {
       emit(state.copyWith(
-          newRecord: state.currentRecord!
+          newRecord: state.currentWorkingRecord!
               .copyWith(newMoodLevel, newHowWasYourDay, newSleepTime)));
     }
   }
