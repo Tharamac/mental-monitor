@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:mental_monitor/api/notification_api.dart';
 import 'package:mental_monitor/api/notified_time_datasource.dart';
 import 'package:mental_monitor/constant/constant.dart';
 import 'package:mental_monitor/file_manager.dart';
@@ -80,33 +81,8 @@ class UserSessionBloc extends Bloc<UserSessionEvent, UserSessionState> {
       // emit(state.copyWith(records: state.records));
     });
 
-    on<UpdateNotifiedTime>((event, emit) {
-      DateTime notifiedTime = DateTime(
-          DateTime.now().year,
-          DateTime.now().month,
-          DateTime.now().day,
-          event.notifiedTime.hour,
-          event.notifiedTime.minute,
-          0);
-      
-      final savedUser = User(
-          name: state.name,
-          records: state.records,
-          notificationTime: notifiedTime);
-      final FileManager updateRecordsFile =
-          FileManager(fileName: currentUserFile);
-      updateRecordsFile.writedata(jsonEncode(
-        savedUser.toJson(),
-      ));
 
-      emit(state.copyWith(
-        notifiedTime: notifiedTime,
-      ));
-    });
 
-    on<LoadNotifiedTime>(
-      (event, emit) {},
-    );
 
     on<ReDailyRecord>(((event, emit) {
       emit(state.copyWith(

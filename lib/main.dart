@@ -10,6 +10,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:mental_monitor/api/notification_api.dart';
 import 'package:mental_monitor/blocs/app_bloc_observer.dart';
+import 'package:mental_monitor/blocs/notified_time/notified_time_cubit.dart';
 import 'package:mental_monitor/blocs/user/user_bloc.dart';
 import 'package:mental_monitor/constant/constant.dart';
 import 'package:mental_monitor/data_mock.dart';
@@ -39,14 +40,6 @@ void main() async {
       .then((value) => jsonDecode(value), onError: (e) => null);
 
   await LocalNoticeService().setup();
-  // DateTime.parse(currentUserData["notified_time"])
-  // todo: load actual setting on home_page
-  LocalNoticeService().showDailyNotificationAtTime(
-      0,
-      "วันนี้เป็นอย่างไรบ้าง",
-      "บันทึกเรื่องราววันนี้ได้เลย",
-      "notify memo",
-      TimeOfDay(hour: 19, minute: 00));
 
   Bloc.observer = AppBlocObserver();
   runApp(MyApp(
@@ -114,6 +107,9 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(providers: [
       BlocProvider<UserSessionBloc>(
         create: (BuildContext context) => UserSessionBloc(),
+      ),
+      BlocProvider<NotfiedTimeCubit>(
+        create: (BuildContext context) => NotfiedTimeCubit(),
       ),
     ], child: child);
   }

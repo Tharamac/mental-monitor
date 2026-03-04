@@ -1,32 +1,37 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const notifiedTimeKey = "notified_time";
-
+const notifiedTimeHrKey = "notified_time_hr";
+const notifiedTimeMinKey = "notified_time_min";
 
 class NotifiedTimeDataSource {
-  static final NotifiedTimeDataSource _singleton = NotifiedTimeDataSource._internal();
+  static final NotifiedTimeDataSource _singleton =
+      NotifiedTimeDataSource._internal();
 
   factory NotifiedTimeDataSource() {
     return _singleton;
   }
-  
-  void saveNotifiedTime(DateTime notifiedTime) async {
+
+  void saveNotifiedTime(TimeOfDay notifiedTime) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(notifiedTimeKey, notifiedTime.toIso8601String());
+    await prefs.setInt(notifiedTimeHrKey, notifiedTime.hour);
+    await prefs.setInt(notifiedTimeMinKey, notifiedTime.minute);
   }
 
-  Future<DateTime?> loadNotifiedTime() async {
+  Future<TimeOfDay> loadNotifiedTime() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? loadedNotifiedTime = prefs.getString(notifiedTimeKey);
-    final notifiedTime = DateTime.tryParse(loadedNotifiedTime ?? '');
+    int loadedNotifiedHr = prefs.getInt(notifiedTimeHrKey) ?? 19;
+    int loadedNotifiedMin = prefs.getInt(notifiedTimeMinKey) ?? 0;
+    final notifiedTime =
+        TimeOfDay(hour: loadedNotifiedHr, minute: loadedNotifiedMin);
     return notifiedTime;
   }
 
   void resetNotifiedTime() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove(notifiedTimeKey);
+    await prefs.remove(notifiedTimeHrKey);
+    await prefs.remove(notifiedTimeMinKey);
   }
 
   NotifiedTimeDataSource._internal();
 }
-

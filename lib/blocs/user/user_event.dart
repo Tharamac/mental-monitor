@@ -32,16 +32,16 @@ class ReDailyRecord extends UserSessionEvent {
   // const UpdateDailyRecord(this.dailyRecord);
 }
 
-class UpdateNotifiedTime extends UserSessionEvent {
-  //   // final DailyRecord dailyRecord;
-  final TimeOfDay notifiedTime;
-  const UpdateNotifiedTime(this.notifiedTime);
-}
+// class UpdateNotifiedTime extends UserSessionEvent {
+//   //   // final DailyRecord dailyRecord;
+//   final TimeOfDay notifiedTime;
+//   const UpdateNotifiedTime(this.notifiedTime);
+// }
 
-class LoadNotifiedTime extends UserSessionEvent {
-  //   // final DailyRecord dailyRecord;
-  const LoadNotifiedTime();
-}
+// class LoadNotifiedTime extends UserSessionEvent {
+//   //   // final DailyRecord dailyRecord;
+//   const LoadNotifiedTime();
+// }
 
 // class RegisterUser extends UserEvent {}
 
