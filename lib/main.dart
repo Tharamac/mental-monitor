@@ -19,6 +19,16 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         // fontFamily:
+        inputDecorationTheme: InputDecorationTheme(
+          
+          contentPadding: EdgeInsets.all(12),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(width: 2, color: Colors.blueGrey), //<-- SEE HERE
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(width: 3, color: Colors.blue), //<-- SEE HERE
+          ),
+        ),
         textTheme: GoogleFonts.ibmPlexSansThaiTextTheme(),
         drawerTheme: DrawerThemeData(elevation: 2, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
         appBarTheme: AppBarTheme(

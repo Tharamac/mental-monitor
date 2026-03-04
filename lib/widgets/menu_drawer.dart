@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mental_monitor/pages/setting_page.dart';
 
 class MainMenuDrawerWidget extends StatelessWidget {
   const MainMenuDrawerWidget({
@@ -52,27 +53,29 @@ class MainMenuDrawerWidget extends StatelessWidget {
             padding: EdgeInsets.zero,
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
+              // TextButton.icon(
+              //     onPressed: () {},
+              //     style: TextButton.styleFrom(alignment: Alignment.centerLeft, minimumSize: Size(200, 60), backgroundColor: Colors.blue[50], padding: EdgeInsets.symmetric(horizontal: 20)),
+              //     icon: Icon(Icons.email),
+              //     label: Text(
+              //       "ส่งข้อมูลไปที่อีเมล์",
+              //       style: GoogleFonts.ibmPlexSansThai(
+              //         fontSize: 24,
+              //         fontWeight: FontWeight.w600,
+              //       ),
+              //     )),
+              // TextButton.icon(
+              //     onPressed: () {},
+              //     style: TextButton.styleFrom(alignment: Alignment.centerLeft, minimumSize: Size(200, 60), backgroundColor: Colors.blue[50], padding: EdgeInsets.symmetric(horizontal: 20)),
+              //     icon: Icon(Icons.backup),
+              //     label: Text(
+              //       "สำรองข้อมูล",
+              //       style: GoogleFonts.ibmPlexSansThai(fontSize: 24, fontWeight: FontWeight.w600),
+              //     )),
               TextButton.icon(
-                  onPressed: () {},
-                  style: TextButton.styleFrom(alignment: Alignment.centerLeft, minimumSize: Size(200, 60), backgroundColor: Colors.blue[50], padding: EdgeInsets.symmetric(horizontal: 20)),
-                  icon: Icon(Icons.email),
-                  label: Text(
-                    "ส่งข้อมูลไปที่อีเมล์",
-                    style: GoogleFonts.ibmPlexSansThai(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  )),
-              TextButton.icon(
-                  onPressed: () {},
-                  style: TextButton.styleFrom(alignment: Alignment.centerLeft, minimumSize: Size(200, 60), backgroundColor: Colors.blue[50], padding: EdgeInsets.symmetric(horizontal: 20)),
-                  icon: Icon(Icons.backup),
-                  label: Text(
-                    "สำรองข้อมูล",
-                    style: GoogleFonts.ibmPlexSansThai(fontSize: 24, fontWeight: FontWeight.w600),
-                  )),
-              TextButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: ((context) => SettingPage())));
+                  },
                   style: TextButton.styleFrom(alignment: Alignment.centerLeft, minimumSize: Size(200, 60), backgroundColor: Colors.blue[50], padding: EdgeInsets.symmetric(horizontal: 20)),
                   icon: Icon(Icons.settings),
                   label: Text(
