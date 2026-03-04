@@ -59,7 +59,7 @@ class SettingPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "แอพจะแจ้งเตือนเวลา $currentNotifiedTime ของทุกวัน",
+                      "แอพจะแจ้งเตือนเวลา ${MaterialLocalizations.of(context).formatTimeOfDay(currentNotifiedTime, alwaysUse24HourFormat: true)} น. ของทุกวัน",
                       style: GoogleFonts.ibmPlexSansThai(
                           fontSize: 15, fontWeight: FontWeight.normal),
                     ),
@@ -78,7 +78,7 @@ class SettingPage extends StatelessWidget {
                         if (newTime != null) {
                           context
                               .read<NotfiedTimeCubit>()
-                              .updateNotifiedTimeSetting(currentNotifiedTime);
+                              .updateNotifiedTimeSetting(newTime);
                         }
                       },
                       child: Text("เปลี่ยนเวลา",
