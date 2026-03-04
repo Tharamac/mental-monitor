@@ -3,17 +3,18 @@ part of 'user_bloc.dart';
 @immutable
 class UserState {
   final String name;
+  final List<DailyRecord> records;
 
-  const UserState({required this.name});
+  UserState({required this.name, List<DailyRecord>? records})
+      : records = records ?? [];
 
-  UserState copyWith({String? name}) {
-    return UserState(name: name ?? "");
+  UserState copyWith({String? name, List<DailyRecord>? records}) {
+    return UserState(name: name ?? this.name, records: records ?? this.records);
   }
 
   @override
   String toString() {
-    // TODO: implement toString
-    return "name: $name";
+    return "name: $name, records: $records";
   }
 
   @override
@@ -21,5 +22,5 @@ class UserState {
 }
 
 class UserInitial extends UserState {
-  const UserInitial() : super(name: "");
+  UserInitial() : super(name: "", records: []);
 }
