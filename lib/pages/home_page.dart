@@ -27,7 +27,9 @@ class _HomePageState extends State<HomePage> {
     widget.currentUserData.fold((newUser) {
       context.read<UserSessionBloc>().add(RegisterUserEvent(newUser));
     }, (existingUser) {
-      context.read<UserSessionBloc>().add(ImportExistingUserEvent(existingUser));
+      context
+          .read<UserSessionBloc>()
+          .add(ImportExistingUserEvent(existingUser));
     });
     super.initState();
   }
@@ -36,12 +38,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     DateTime today = DateTime(
         DateTime.now().year + 543, DateTime.now().month, DateTime.now().day);
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -53,101 +50,104 @@ class _HomePageState extends State<HomePage> {
       ),
       drawer: MainMenuDrawerWidget(),
 
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            children: <Widget>[
-              Text(
-                "บันทึกของวันนี้",
-                style: GoogleFonts.ibmPlexSansThai(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Expanded(
-                flex: 3,
-                child: Card(
-                  color: Colors.blueGrey[200],
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          formatDateInThai(DateTime.now()),
-                          style: GoogleFonts.ibmPlexSansThai(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Container(
-                            padding: EdgeInsets.all(4),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                                color: Colors.blueGrey[400],
-                                borderRadius: BorderRadius.circular(6)),
-                            child: Text(
-                              "วันนี้ยังไม่ได้บันทึกเรื่องราว กดเพื่อบันทึกเลย",
-                              textAlign: TextAlign.center,
+      body: BlocBuilder<UserSessionBloc, UserSessionState>(
+        builder: (context, state) {
+          print(state);
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    "บันทึกของวันนี้",
+                    style: GoogleFonts.ibmPlexSansThai(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Card(
+                      color: Colors.blueGrey[200],
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              formatDateInThai(DateTime.now()),
                               style: GoogleFonts.ibmPlexSansThai(
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                          ),
+                            Expanded(
+                              flex: 2,
+                              child: Container(
+                                padding: EdgeInsets.all(4),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    color: Colors.blueGrey[400],
+                                    borderRadius: BorderRadius.circular(6)),
+                                child: Text(
+                                  "วันนี้ยังไม่ได้บันทึกเรื่องราว กดเพื่อบันทึกเลย",
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.ibmPlexSansThai(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            TextButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                  primary: Colors.blueGrey[200]),
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (builder) =>
+                                        NewMentalEntryPage()));
+                              },
+                              icon: Icon(Icons.add, color: Colors.black),
+                              label: Text(
+                                "เพิ่มบันทึกของวันนี้",
+                                style: GoogleFonts.ibmPlexSansThai(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black),
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        TextButton.icon(
-                          style: ElevatedButton.styleFrom(
-                              primary: Colors.blueGrey[200]),
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (builder) => NewMentalEntryPage()));
-                          },
-                          icon: Icon(Icons.add, color: Colors.black),
-                          label: Text(
-                            "เพิ่มบันทึกของวันนี้",
-                            style: GoogleFonts.ibmPlexSansThai(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text(
+                    "บันทึกที่ผ่านมา",
+                    style: GoogleFonts.ibmPlexSansThai(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Expanded(
+                      flex: 7,
+                      child: ListView(
+                        children: state.records
+                            .map((record) => EntryRecordCard(
+                                  record: record,
+                                  // useDefaultColor: true,
+                                ))
+                            .toList(),
+                      ))
+                ],
               ),
-              SizedBox(
-                height: 8,
-              ),
-              Text(
-                "บันทึกที่ผ่านมา",
-                style: GoogleFonts.ibmPlexSansThai(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Expanded(
-                  flex: 7,
-                  child: ListView(
-                    children: [
-                      EntryRecordCard(),
-                      EntryRecordCard(),
-                      EntryRecordCard(),
-                      EntryRecordCard(),
-                      EntryRecordCard(),
-                      EntryRecordCard(),
-                      EntryRecordCard(),
-                    ],
-                  ))
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
 
       // floatingActionButton: FloatingActionButton(
@@ -158,4 +158,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-

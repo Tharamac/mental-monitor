@@ -126,21 +126,21 @@ class _NewMentalEntryPageState extends State<NewMentalEntryPage> {
                                           fontSize: 12,
                                           fontWeight: FontWeight.w400,
                                         )),
-                                    // Row(
-                                    //     children: emotionSliderPalette2
-                                    //         .asMap()
-                                    //         .entries
-                                    //         .map((entry) {
-                                    //   int idx = entry.key;
-                                    //   Color? val = entry.value;
+                                    Row(
+                                        children: emotionSliderPalette2
+                                            .asMap()
+                                            .entries
+                                            .map((entry) {
+                                      int idx = entry.key;
+                                      Color? val = entry.value;
 
-                                    //   return Expanded(
-                                    //       child: Container(
-                                    //     color: val,
-                                    //     child: Text((idx + 1).toString()),
-                                    //     height: 30,
-                                    //   ));
-                                    // }).toList()),
+                                      return Expanded(
+                                          child: Container(
+                                        color: val,
+                                        child: Text((idx + 1).toString()),
+                                        height: 30,
+                                      ));
+                                    }).toList()),
                                   ],
                                 )),
                             Expanded(

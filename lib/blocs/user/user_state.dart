@@ -6,12 +6,18 @@ class UserSessionState {
   final List<DailyRecord> records;
   final bool isTodayRecorded;
 
-  UserSessionState({required this.name, List<DailyRecord>? records, this.isTodayRecorded = false})
+  UserSessionState(
+      {required this.name,
+      List<DailyRecord>? records,
+      this.isTodayRecorded = false})
       : records = records ?? [];
 
-  UserSessionState copyWith({String? name, List<DailyRecord>? records}) {
+  UserSessionState copyWith(
+      {String? name, List<DailyRecord>? records, bool? isTodayRecorded}) {
     return UserSessionState(
-        name: name ?? this.name, records: records ?? this.records);
+        name: name ?? this.name,
+        records: records ?? this.records,
+        isTodayRecorded: isTodayRecorded ?? this.isTodayRecorded);
   }
 
   @override
