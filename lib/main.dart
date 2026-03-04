@@ -14,6 +14,8 @@ import 'package:mental_monitor/blocs/user/user_bloc.dart';
 import 'package:mental_monitor/constant/constant.dart';
 import 'package:mental_monitor/data_mock.dart';
 import 'package:mental_monitor/file_manager.dart';
+import 'package:mental_monitor/model/daily_record.dart';
+import 'package:mental_monitor/model/user.dart';
 import 'package:mental_monitor/pages/welcome_page.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tzData;
@@ -22,30 +24,29 @@ import 'pages/home_page.dart';
 const useMockData = true;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   Intl.defaultLocale = 'th';
   initializeDateFormatting();
   tzData.initializeTimeZones();
+
+  Map<String, dynamic>? currentUserData;
+  if (useMockData) {
+    // currentUserData = mockUserData.toJson();
+
+    FileManager(fileName: currentUserFile).writedata(jsonEncode(
+      mockUserData.toJson(),
+    ));
+  }
+  final value = await FileManager(fileName: currentUserFile).readData();
+  currentUserData = jsonDecode(value);
   await LocalNoticeService().setup();
+  // DateTime.parse(currentUserData["notified_time"])
+  // todo: load actual setting on home_page
   LocalNoticeService().showDailyNotificationAtTime(
       0,
       "วันนี้เป็นอย่างไรบ้าง",
       "บันทึกเรื่องราววันนี้ได้เลย",
       "notify memo",
-      TimeOfDay(hour: 0, minute: 14));
-
-  Map<String, dynamic>? currentUserData;
-  if (useMockData) {
-    currentUserData = mockUserData.toJson();
-    FileManager(fileName: currentUserFile)
-        .writedata(mockUserData.toJson().toString());
-  }
-  FileManager(fileName: currentUserFile).readData().then((value) {
-    print(value);
-    currentUserData = jsonDecode(value);
-  }, onError: (e) {
-    // print(e);
-  });
+      TimeOfDay(hour: 19, minute: 00));
 
   Bloc.observer = AppBlocObserver();
   runApp(MyApp(

@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:math';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:mental_monitor/api/notification_api.dart';
 import 'package:mental_monitor/blocs/user/user_bloc.dart';
 import 'package:mental_monitor/constant/palette.dart';
 import 'package:mental_monitor/pages/new_entries_page.dart';
@@ -30,6 +31,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     clearTodayRecord();
+      
     widget.currentUserData.fold((newUser) {
       context.read<UserSessionBloc>().add(RegisterUserEvent(newUser));
     }, (existingUser) {
@@ -37,6 +39,7 @@ class _HomePageState extends State<HomePage> {
           .read<UserSessionBloc>()
           .add(ImportExistingUserEvent(existingUser));
     });
+  
     super.initState();
   }
 
