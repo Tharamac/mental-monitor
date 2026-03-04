@@ -7,12 +7,12 @@ class DailyRecord extends Equatable {
   final DateTime recordDate;
   final int moodLevel;
   final String howWasYourDay;
-  final Duration sleepTime;
+  final Duration? sleepTime;
   DailyRecord({
     required this.recordDate,
     required this.moodLevel,
     required this.howWasYourDay,
-    required this.sleepTime,
+    this.sleepTime,
   });
 
   @override
@@ -34,10 +34,10 @@ class DailyRecord extends Equatable {
 
   factory DailyRecord.emptyRecord(DateTime date) {
     return DailyRecord(
-        recordDate: date,
-        moodLevel: 5,
-        howWasYourDay: "",
-        sleepTime: Duration.zero);
+      recordDate: date,
+      moodLevel: 5,
+      howWasYourDay: "",
+    );
   }
 
   factory DailyRecord.fromJson(Map<String, dynamic> json) {
@@ -61,7 +61,7 @@ class DailyRecord extends Equatable {
         'record_date': recordDate.toIso8601String(),
         'mood_level': moodLevel,
         'how_was_your_day': howWasYourDay,
-        'sleep_time': sleepTime.inHours
+        'sleep_time': sleepTime?.inHours ?? 0
       };
 
   static List<String> get getFieldName =>

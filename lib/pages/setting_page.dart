@@ -136,7 +136,7 @@ class SettingPage extends StatelessWidget {
                               DateFormat.Hm().format(recordPos.recordDate),
                               recordPos.moodLevel,
                               recordPos.howWasYourDay,
-                              prettyDuration(recordPos.sleepTime,
+                              prettyDuration(recordPos.sleepTime ?? Duration.zero,
                                   locale:
                                       DurationLocale.fromLanguageCode('th')!)
                             ]);
